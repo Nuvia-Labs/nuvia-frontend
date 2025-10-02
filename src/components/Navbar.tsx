@@ -21,13 +21,13 @@ export function Navbar() {
   return (
     <>
       {/* Top Navigation - Connect Wallet */}
-      <nav className="bg-white sticky top-0 z-50">
+      <nav className="bg-red-500 to-transparent sticky top-0 z-50">
         <div className="max-w-md mx-auto px-4">
           <div className="flex justify-end items-center h-12">
             <Button
               onClick={user ? disconnect : connect}
               disabled={isConnecting}
-              className="rounded-full px-4 h-8 text-xs font-medium shadow-sm hover:shadow-md transition-all bg-red-500 hover:bg-red-600 text-white border-0"
+              className="rounded-full px-4 h-8 text-xs font-medium shadow-sm hover:shadow-md transition-all bg-white hover:bg-gray-100 text-red-600"
             >
               <span className="ml-1">{user ? 'Connected' : 'Connect Wallet'}</span>
             </Button>
@@ -36,7 +36,7 @@ export function Navbar() {
       </nav>
 
       {/* Bottom Navigation - Learn, Earn, My Deposits */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white z-50">
         <div className="max-w-md mx-auto">
           <div className="flex items-center justify-around py-3">
             {navItems.map((item) => {
