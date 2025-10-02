@@ -28,10 +28,10 @@ export function Navbar() {
               onClick={user ? disconnect : connect}
               disabled={isConnecting}
               variant="outline"
-              className="rounded-full px-6 h-10 text-sm font-medium shadow-sm hover:shadow-md transition-all"
+              className="rounded-full px-4 h-8 text-xs font-medium shadow-sm hover:shadow-md transition-all border-gray-300"
             >
               <span>💼</span>
-              <span className="ml-2">{user ? 'Connected' : 'Connect Wallet'}</span>
+              <span className="ml-1">{user ? 'Connected' : 'Connect'}</span>
             </Button>
           </div>
         </div>
