@@ -1,0 +1,62 @@
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+import { Navbar } from '@/components/Navbar';
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+});
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+});
+
+export const metadata: Metadata = {
+  title: 'Nuvia',
+  description: 'Deposit crypto assets and earn yield through a simple, beginner-friendly interface',
+  keywords: ['DeFi', 'yield farming', 'crypto', 'ethereum', 'farcaster'],
+  authors: [{ name: 'DeFi Yield Team' }],
+  openGraph: {
+    title: 'DeFi Yield App',
+    description: 'Deposit crypto assets and earn yield through a simple, beginner-friendly interface',
+    type: 'website',
+    images: ['/preview.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'DeFi Yield App',
+    description: 'Deposit crypto assets and earn yield through a simple, beginner-friendly interface',
+    images: ['/preview.png'],
+  },
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+  themeColor: '#2563eb',
+};
+
+interface RootLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
+  return (
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <head>
+        {/* Farcaster Frame metadata */}
+        <meta property="fc:frame" content="vNext" />
+        <meta property="fc:frame:image" content="/preview.png" />
+        <meta property="fc:frame:button:1" content="Open App" />
+        <meta property="fc:frame:button:1:action" content="link" />
+        <meta property="fc:frame:button:1:target" content={process.env.NEXT_PUBLIC_APP_URL} />
+      </head>
+      <body className="font-sans antialiased bg-white min-h-screen">
+        <div className="min-h-screen flex flex-col">
+          <Navbar />
+          <main className="flex-1 pb-20">
+            {children}
+          </main>
+        </div>
+      </body>
+    </html>
+  );
+}

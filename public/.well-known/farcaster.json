@@ -1,0 +1,11 @@
+{
+  "version": "1",
+  "name": "DeFi Yield App",
+  "iconUrl": "https://your-domain.com/icon.png",
+  "homeUrl": "https://your-domain.com",
+  "imageUrl": "https://your-domain.com/preview.png",
+  "description": "Deposit crypto assets and earn yield through a simple, beginner-friendly interface",
+  "aboutUrl": "https://your-domain.com/about",
+  "splashImageUrl": "https://your-domain.com/splash.png",
+  "splashBackgroundColor": "#ffffff"
+}
