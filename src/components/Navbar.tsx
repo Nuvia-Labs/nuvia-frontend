@@ -2,16 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useWallet } from '@/hooks/useWallet';
-import { Home, TrendingUp, Briefcase } from 'lucide-react';
+import { Home, TrendingUp, User } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 const navItems = [
   { href: '/learn', label: 'Learn', icon: Home },
   { href: '/', label: 'Earn', icon: TrendingUp },
-  { href: '/deposits', label: 'My Deposits', icon: Briefcase },
+  { href: '/deposits', label: 'Profile', icon: User },
 ];
 
 export function Navbar() {
@@ -48,26 +49,57 @@ export function Navbar() {
       </nav>
 
       {/* Bottom Navigation - Learn, Earn, My Deposits */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white z-50">
+      <nav className="fixed bottom-0 left-0 right-0 z-50">
         <div className="max-w-md mx-auto">
-          <div className="flex items-center justify-around py-3">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    'flex flex-col items-center transition-colors',
-                    isActive
-                      ? 'text-gray-900'
-                      : 'text-gray-400 hover:text-gray-600'
-                  )}
-                >
-                  <item.icon size={24} />
-                </Link>
-              );
-            })}
+          <div className="flex items-center justify-center py-4 relative">
+            <div className="flex items-center bg-gray-50 rounded-full p-1 relative px-2">
+              {/* Animated Background */}
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return isActive ? (
+                  <motion.div
+                    key={`bg-${item.href}`}
+                    layoutId="activeTab"
+                    className="absolute bg-white rounded-full shadow-md"
+                    style={{
+                      width: '80px',
+                      height: '44px',
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 800,
+                      damping: 25
+                    }}
+                  />
+                ) : null;
+              })}
+              
+              {/* Navigation Items */}
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="relative z-10"
+                  >
+                    <motion.div
+                      className={cn(
+                        'flex items-center justify-center w-20 h-11 rounded-full transition-colors duration-150',
+                        isActive
+                          ? 'text-gray-900'
+                          : 'text-gray-400 hover:text-gray-600'
+                      )}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      transition={{ duration: 0.1 }}
+                    >
+                      <item.icon size={20} />
+                    </motion.div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       </nav>
