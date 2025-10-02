@@ -23,7 +23,19 @@ export function Navbar() {
       {/* Top Navigation - Connect Wallet */}
       <nav className="bg-red-500 to-transparent sticky top-0 z-50">
         <div className="max-w-md mx-auto px-4">
-          <div className="flex justify-end items-center h-12">
+          <div className="flex justify-between items-center h-12">
+            {/* Nuvia Logo */}
+            <div className="w-8 h-8 flex items-center justify-center">
+              <Image
+                src="/Images/Logo/nuvia-logo.png"
+                alt="Nuvia Logo"
+                width={24}
+                height={24}
+                className="object-contain"
+              />
+            </div>
+            
+            {/* Connect Wallet Button */}
             <Button
               onClick={user ? disconnect : connect}
               disabled={isConnecting}

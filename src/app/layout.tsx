@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   description: 'Deposit crypto assets and earn yield through a simple, beginner-friendly interface',
   keywords: ['DeFi', 'yield farming', 'crypto', 'ethereum', 'farcaster'],
   authors: [{ name: 'DeFi Yield Team' }],
+  icons: {
+    icon: '/Images/Logo/nuvia-logo.png',
+    shortcut: '/Images/Logo/nuvia-logo.png',
+    apple: '/Images/Logo/nuvia-logo.png',
+  },
   openGraph: {
     title: 'DeFi Yield App',
     description: 'Deposit crypto assets and earn yield through a simple, beginner-friendly interface',
@@ -31,7 +36,7 @@ export const metadata: Metadata = {
     images: ['/preview.png'],
   },
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
-  themeColor: '#2563eb',
+  themeColor: '#ef4444',
 };
 
 interface RootLayoutProps {

@@ -46,7 +46,7 @@ export function AssetCard({ asset, onSelect, userDeposited = 0 }: AssetCardProps
   };
 
   return (
-    <Card className={`mb-3 border border-gray-200 shadow-sm bg-gradient-to-br ${getGradientColors(asset.id)} cursor-pointer transition-all duration-200 hover:shadow-md`} 
+    <Card className={`mb-3 border border-gray-100 shadow-sm bg-gradient-to-br ${getGradientColors(asset.id)} cursor-pointer transition-all duration-200 hover:shadow-md`} 
           onClick={handleCardClick}>
       <CardContent className="p-3">
         {/* Compact Header */}
