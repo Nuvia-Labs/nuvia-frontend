@@ -6,7 +6,7 @@ export const mockAssets: Asset[] = [
     id: 'cbbtc-vault',
     name: 'cbBTC',
     symbol: 'cbBTC',
-    logoUrl: '/Images/Logo/cbbtc-logo.png',
+    logoUrl: '/Images/Logo/cbbtc-logo.webp',
     apr: 0.085,  // 8.5%
     tvl: 15600000,  // $15.6M
     description: 'Coinbase Wrapped Bitcoin with institutional-grade security and DeFi rewards',

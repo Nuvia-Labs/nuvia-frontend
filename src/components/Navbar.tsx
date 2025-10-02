@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { WalletConnect } from './WalletConnect';
+import Image from 'next/image';
 import { useWallet } from '@/hooks/useWallet';
 import { Home, TrendingUp, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -27,11 +27,9 @@ export function Navbar() {
             <Button
               onClick={user ? disconnect : connect}
               disabled={isConnecting}
-              variant="outline"
-              className="rounded-full px-4 h-8 text-xs font-medium shadow-sm hover:shadow-md transition-all border-gray-300"
+              className="rounded-full px-4 h-8 text-xs font-medium shadow-sm hover:shadow-md transition-all bg-red-500 hover:bg-red-600 text-white border-0"
             >
-              <span>💼</span>
-              <span className="ml-1">{user ? 'Connected' : 'Connect'}</span>
+              <span className="ml-1">{user ? 'Connected' : 'Connect Wallet'}</span>
             </Button>
           </div>
         </div>
