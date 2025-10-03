@@ -63,9 +63,9 @@ const getVaultLogo = (vault: string) => {
 
 export default function Friends() {
   return (
-    <div className="w-full max-w-sm mx-auto min-h-screen bg-gray-50">
+    <div className="w-full max-w-sm mx-auto min-h-screen">
       {/* Hero Section */}
-      <div className="px-6 py-8 bg-white">
+      <div className="px-6 py-8">
         {/* Cat Loading Animation */}
         <div className="flex justify-center mb-6">
           <motion.div
@@ -104,7 +104,7 @@ export default function Friends() {
           {mockFriends.map((friend, index) => (
             <motion.div
               key={friend.id}
-              className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+              className="bg-white rounded-2xl p-4 shadow-sm border border-gray-200"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 * index }}
