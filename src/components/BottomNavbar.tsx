@@ -47,9 +47,10 @@ export function BottomNavbar() {
               style={{
                 width: '80px',
                 height: '44px',
+                left: '8px',
               }}
               animate={{
-                x: currentActiveIndex * 80 + 8,
+                x: currentActiveIndex * 80,
               }}
               transition={{
                 type: "spring",
