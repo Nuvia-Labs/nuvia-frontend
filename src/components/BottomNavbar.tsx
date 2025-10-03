@@ -8,7 +8,7 @@ import { Users, Layers, Briefcase } from 'lucide-react';
 
 const navItems = [
   { href: '/friends', label: 'Friends', icon: Users },
-  { href: '/', label: 'Earn', icon: Layers },
+  { href: '/earn', label: 'Earn', icon: Layers },
   { href: '/portfolio', label: 'Portfolio', icon: Briefcase },
 ];
 
