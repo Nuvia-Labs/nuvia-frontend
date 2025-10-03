@@ -66,31 +66,31 @@ export default function Home() {
         <div className="relative z-10 text-center">
           {/* Nuvia Logo - Larger and Centered */}
           <div className="flex justify-center mb-6">
-            <motion.div 
+            <motion.div
               className="flex items-center justify-center"
               initial={{ scale: 0, rotate: 0 }}
-              animate={{ 
+              animate={{
                 scale: 1,
                 rotate: [-15, 15],
-                x: 0
+                x: 0,
               }}
-              transition={{ 
+              transition={{
                 scale: {
                   duration: 0.8,
                   ease: "easeOut",
-                  delay: 0.2
+                  delay: 0.2,
                 },
                 rotate: {
                   duration: 3,
                   ease: "easeInOut",
                   repeat: Infinity,
                   repeatType: "reverse",
-                  delay: 1
-                }
+                  delay: 1,
+                },
               }}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.1,
-                transition: { duration: 0.3 }
+                transition: { duration: 0.3 },
               }}
               whileTap={{ scale: 0.95 }}
             >
@@ -118,7 +118,7 @@ export default function Home() {
       </div>
 
       {/* Content Area */}
-      <div className="bg-white rounded-t-3xl px-4 pt-6 pb-20 -mt-6 relative z-10 min-h-screen">
+      <div className="bg-white rounded-t-3xl px-4 pt-6 pb-6 -mt-6 relative z-10">
         {/* Assets List */}
         <div className="space-y-3">
           {assets.map((asset) => {
@@ -137,16 +137,20 @@ export default function Home() {
           })}
         </div>
 
-        {/* Connect Wallet Prompt for non-connected users */}
         {!isConnected && (
-          <div className="mt-6 bg-red-50 border border-red-100 rounded-xl p-4 text-center">
-            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span className="text-2xl">👝</span>
+          <div className="mt-6 p-4 text-center">
+            <div className="w-20 h-20 flex items-center justify-center mx-auto mb-3 overflow-hidden">
+              <video autoPlay loop muted playsInline>
+                <source
+                  src="/Images/Logo/wallet_animation.webm"
+                  type="video/webm"
+                />
+              </video>
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">
               Connect your wallet to start earning
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600">
               Connect your wallet to deposit assets and start earning yield
             </p>
           </div>
