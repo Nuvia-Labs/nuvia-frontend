@@ -67,7 +67,7 @@ export function AssetCard({ asset, onSelect, userDeposited = 0 }: AssetCardProps
                   {asset.name}
                 </h3>
                 <p className="text-sm text-gray-600">
-                  {asset.name === 'cbBTC' ? 'Bitcoin' : asset.name === 'cbETH' ? 'Ethereum' : 'Stablecoin'}
+                  {asset.name === 'cbBTC' ? 'Coinbase Bitcoin' : asset.name === 'cbETH' ? 'Coinbase Ethereum' : 'Stablecoin USDC'}
                 </p>
               </div>
               <div className="flex items-center space-x-3">

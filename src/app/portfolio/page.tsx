@@ -9,7 +9,7 @@ const userDeposits = [
   {
     id: 1,
     token: "cbBTC",
-    name: "Bitcoin",
+    name: "Coinbase Bitcoin",
     logo: "/Images/Logo/cbbtc-logo.webp",
     amount: "0.045",
     valueUSD: "2,856.30",
@@ -22,7 +22,7 @@ const userDeposits = [
   {
     id: 2,
     token: "cbETH",
-    name: "Ethereum",
+    name: "Coinbase Ethereum",
     logo: "/Images/Logo/cbeth-logo.png",
     amount: "0.8",
     valueUSD: "2,184.50",
