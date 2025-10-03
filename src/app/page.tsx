@@ -54,7 +54,7 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-gradient-to-br from-red-500 to-red-600">
+    <div className="w-full max-w-md mx-auto min-h-screen bg-gradient-to-br from-red-500 to-red-600">
       {/* Hero Section - Full Width Red Background */}
       <div className="px-6 py-8 pb-12 relative overflow-hidden">
         {/* Background Pattern/Effects */}

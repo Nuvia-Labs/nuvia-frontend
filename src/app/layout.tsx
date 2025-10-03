@@ -1,16 +1,12 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import { Navbar } from '@/components/Navbar';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+const productSans = localFont({
+  src: '../../public/Font/ProductSansInfanity.ttf',
+  variable: '--font-product-sans',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -45,7 +41,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={productSans.variable}>
       <head>
         {/* Farcaster Frame metadata */}
         <meta property="fc:frame" content="vNext" />
