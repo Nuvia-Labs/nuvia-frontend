@@ -22,7 +22,7 @@ const userDeposits = [
   {
     id: 2,
     token: "cbETH",
-    name: "Ethereum", 
+    name: "Ethereum",
     logo: "/Images/Logo/cbeth-logo.png",
     amount: "0.8",
     valueUSD: "2,184.50",
@@ -36,7 +36,7 @@ const userDeposits = [
     id: 3,
     token: "USDC",
     name: "USD Coin",
-    logo: "/Images/Logo/usdc-logo.png", 
+    logo: "/Images/Logo/usdc-logo.png",
     amount: "1,500",
     valueUSD: "1,500.00",
     gain: "+0.00",
@@ -90,8 +90,10 @@ export default function Portfolio() {
 
       {/* My Deposits Section */}
       <div className="bg-white rounded-t-3xl pt-6 pb-6 min-h-96">
-        <h2 className="text-sm font-medium text-gray-900 mb-4 px-4">My Deposits:</h2>
-        
+        <h2 className="text-sm font-medium text-gray-900 mb-4 px-4">
+          My Deposits:
+        </h2>
+
         <div className="space-y-4 px-4">
           {userDeposits.map((deposit, index) => (
             <motion.div
@@ -114,14 +116,17 @@ export default function Portfolio() {
                     />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">{deposit.token}</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      {deposit.token}
+                    </h3>
                     <p className="text-xs text-gray-500">{deposit.name}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-gray-900">{deposit.amount}</p>
                   <p className="text-xs text-gray-500">
-                    ${deposit.valueUSD} <span className="text-green-600">({deposit.gain})</span>
+                    ${deposit.valueUSD}{" "}
+                    <span className="text-green-600">({deposit.gain})</span>
                   </p>
                 </div>
               </div>
@@ -129,20 +134,32 @@ export default function Portfolio() {
               {/* Farming Info */}
               <div className="bg-gray-50 rounded-lg p-2">
                 <div className="flex items-center space-x-3 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">{deposit.apy}</span>
+                  <div className="w-8 h-8 rounded-full overflow-hidden">
+                    <Image
+                      src="/Images/Logo/nuvia-logo.png"
+                      alt="Nuvia"
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-900">{deposit.valueUSD} {deposit.token}</p>
+                    <p className="text-xs font-medium text-gray-900">
+                      {deposit.valueUSD} {deposit.token}
+                    </p>
                     <p className="text-xs text-gray-500">
-                      Airdrop points • {deposit.token === 'cbBTC' ? 'cbBTC vault' : deposit.token === 'cbETH' ? 'cbETH vault' : 'USDC vault'}
+                      {deposit.token === "cbBTC"
+                        ? "cbBTC vault"
+                        : deposit.token === "cbETH"
+                        ? "cbETH vault"
+                        : "USDC vault"}
                     </p>
                   </div>
                 </div>
-                
+
                 {/* Airdrop Points Logos */}
                 <div className="flex items-center space-x-2 mt-1">
-                  {deposit.token === 'cbBTC' && (
+                  {deposit.token === "cbBTC" && (
                     <>
                       <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
                         <div className="w-4 h-4 rounded-full overflow-hidden">
@@ -182,7 +199,7 @@ export default function Portfolio() {
                       </div>
                     </>
                   )}
-                  {deposit.token === 'cbETH' && (
+                  {deposit.token === "cbETH" && (
                     <>
                       <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
                         <div className="w-4 h-4 rounded-full overflow-hidden">
@@ -222,7 +239,7 @@ export default function Portfolio() {
                       </div>
                     </>
                   )}
-                  {deposit.token === 'USDC' && (
+                  {deposit.token === "USDC" && (
                     <>
                       <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
                         <div className="w-4 h-4 rounded-full overflow-hidden">
