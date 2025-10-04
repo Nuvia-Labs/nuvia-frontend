@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/Navbar';
 
-const productSans = localFont({
-  src: '../../public/Font/ProductSansInfanity.ttf',
-  variable: '--font-product-sans',
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
   display: 'swap',
 });
 
@@ -41,7 +41,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className={productSans.variable}>
+    <html lang="en" className={inter.variable}>
       <head>
         {/* Farcaster Frame metadata */}
         <meta property="fc:frame" content="vNext" />
@@ -50,7 +50,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta property="fc:frame:button:1:action" content="link" />
         <meta property="fc:frame:button:1:target" content={process.env.NEXT_PUBLIC_APP_URL} />
       </head>
-      <body className="font-sans antialiased bg-white min-h-screen">
+      <body className="font-inter antialiased bg-white min-h-screen">
         <div className="min-h-screen flex flex-col">
           <Navbar />
           <main className="flex-1 pb-20">
