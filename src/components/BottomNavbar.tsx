@@ -4,7 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Users, Layers, Briefcase, Zap } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 
 const navItems = [
   { href: '/friends', label: 'Friends', icon: Users },
@@ -16,6 +16,19 @@ const navItems = [
 export function BottomNavbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [isAILoading, setIsAILoading] = useState(false);
+
+  useEffect(() => {
+    const handleAILoading = (event: CustomEvent) => {
+      setIsAILoading(event.detail.isLoading);
+    };
+
+    window.addEventListener('ai-loading-state', handleAILoading as EventListener);
+    
+    return () => {
+      window.removeEventListener('ai-loading-state', handleAILoading as EventListener);
+    };
+  }, []);
 
   // Memoize active index calculation
   const currentActiveIndex = useMemo(() => {
@@ -36,6 +49,11 @@ export function BottomNavbar() {
   const handleNavigation = (href: string) => {
     router.push(href);
   };
+
+  // Hide navbar when AI is loading
+  if (isAILoading) {
+    return null;
+  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">

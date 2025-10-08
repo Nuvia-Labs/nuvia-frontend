@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, Bot } from "lucide-react";
 import Image from "next/image";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import catLoadingAnimation from "../../../public/Images/Logo/CatLoading.json";
 import catYieldAnimation from "../../../public/Images/Logo/cat-yield.json";
 import catStakeAnimation from "../../../public/Images/Logo/cat-stake.json";
@@ -96,6 +98,11 @@ export default function AI() {
   const [searchResults, setSearchResults] = useState<YieldOption[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleSearch = async () => {
     if (!selectedStrategy) return;
@@ -103,11 +110,21 @@ export default function AI() {
     setIsSearching(true);
     setHasSearched(false);
 
+    // Dispatch loading start event
+    window.dispatchEvent(new CustomEvent('ai-loading-state', { 
+      detail: { isLoading: true } 
+    }));
+
     // Simulate AI search - return top 3 recommendations
     setTimeout(() => {
       setSearchResults(mockYieldOptions[selectedStrategy]);
       setIsSearching(false);
       setHasSearched(true);
+      
+      // Dispatch loading end event
+      window.dispatchEvent(new CustomEvent('ai-loading-state', { 
+        detail: { isLoading: false } 
+      }));
     }, 2000);
   };
 
@@ -188,11 +205,13 @@ export default function AI() {
               }}
               whileHover={{ scale: 1.1 }}
             >
-              <Lottie
-                animationData={catYieldAnimation}
-                loop={true}
-                className="w-full h-full"
-              />
+              {isMounted && (
+                <Lottie
+                  animationData={catYieldAnimation}
+                  loop={true}
+                  className="w-full h-full"
+                />
+              )}
             </motion.div>
           </div>
 
@@ -233,11 +252,13 @@ export default function AI() {
             >
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <Lottie
-                    animationData={catStakeAnimation}
-                    loop={true}
-                    className="w-full h-full"
-                  />
+                  {isMounted && (
+                    <Lottie
+                      animationData={catStakeAnimation}
+                      loop={true}
+                      className="w-full h-full"
+                    />
+                  )}
                 </div>
                 <h4 className="font-semibold text-gray-900 text-sm mb-1">
                   Stake USDC
@@ -260,11 +281,13 @@ export default function AI() {
             >
               <div className="text-center">
                 <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <Lottie
-                    animationData={catSupplyAnimation}
-                    loop={true}
-                    className="w-full h-full"
-                  />
+                  {isMounted && (
+                    <Lottie
+                      animationData={catSupplyAnimation}
+                      loop={true}
+                      className="w-full h-full"
+                    />
+                  )}
                 </div>
                 <h4 className="font-semibold text-gray-900 text-sm mb-1">
                   Supply USDC
@@ -306,11 +329,13 @@ export default function AI() {
                       },
                     }}
                   >
-                    <Lottie
-                      animationData={catLoadingAnimation}
-                      loop={true}
-                      className="w-full h-full"
-                    />
+                    {isMounted && (
+                      <Lottie
+                        animationData={catLoadingAnimation}
+                        loop={true}
+                        className="w-full h-full"
+                      />
+                    )}
                   </motion.div>
                   <span>AI is finding best yields...</span>
                 </>
@@ -331,7 +356,7 @@ export default function AI() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center"
           >
             <div className="text-center px-4">
               <motion.div
@@ -345,11 +370,13 @@ export default function AI() {
                   y: { duration: 1.5, repeat: Infinity, ease: "easeInOut" },
                 }}
               >
-                <Lottie
-                  animationData={catLoadingAnimation}
-                  loop={true}
-                  className="w-full h-full"
-                />
+                {isMounted && (
+                  <Lottie
+                    animationData={catLoadingAnimation}
+                    loop={true}
+                    className="w-full h-full"
+                  />
+                )}
               </motion.div>
 
               <h3 className="text-xl font-bold text-white mb-2">
@@ -468,11 +495,13 @@ export default function AI() {
         {!selectedStrategy && (
           <div className="text-center py-8">
             <div className="w-12 h-12 mx-auto mb-4">
-              <Lottie
-                animationData={catAskAnimation}
-                loop={true}
-                className="w-full h-full"
-              />
+              {isMounted && (
+                <Lottie
+                  animationData={catAskAnimation}
+                  loop={true}
+                  className="w-full h-full"
+                />
+              )}
             </div>
             <h3 className="font-semibold text-gray-900 mb-2">
               Select a strategy above
