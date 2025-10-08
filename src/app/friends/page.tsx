@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
-import catLoadingAnimation from "../../../public/Images/Logo/CatLoading.json";
+import Catfriends from "../../../public/Images/Logo/Cat-friends.json";
 import Image from "next/image";
 
 const mockFriends = [
@@ -75,7 +75,7 @@ export default function Friends() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <Lottie
-              animationData={catLoadingAnimation}
+              animationData={Catfriends}
               loop={true}
               className="w-full h-full"
             />

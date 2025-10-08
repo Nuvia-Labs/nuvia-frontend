@@ -108,18 +108,6 @@ export default function AI() {
     }, 2000);
   };
 
-  const getRiskColor = (risk: string) => {
-    switch (risk) {
-      case "Low":
-        return "text-green-600 bg-green-50";
-      case "Medium":
-        return "text-yellow-600 bg-yellow-50";
-      case "High":
-        return "text-red-600 bg-red-50";
-      default:
-        return "text-gray-600 bg-gray-50";
-    }
-  };
 
   const RiskIndicator = ({ risk }: { risk: "Low" | "Medium" | "High" }) => {
     const riskData = {
@@ -222,7 +210,7 @@ export default function AI() {
       </div>
 
       {/* Content Area */}
-      <div className="bg-white rounded-t-3xl px-4 pt-6 pb-6 -mt-6 relative z-10">
+      <div className="bg-white rounded-t-3xl px-4 pt-6 pb-10 -mt-6 relative z-10">
         {/* Strategy Selection */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
