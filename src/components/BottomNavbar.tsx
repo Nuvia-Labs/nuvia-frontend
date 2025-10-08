@@ -3,12 +3,13 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { Users, Layers, Briefcase } from 'lucide-react';
+import { Users, Layers, Briefcase, Zap } from 'lucide-react';
 import { useMemo } from 'react';
 
 const navItems = [
   { href: '/friends', label: 'Friends', icon: Users },
   { href: '/earn', label: 'Earn', icon: Layers },
+  { href: '/ai', label: 'AI', icon: Zap },
   { href: '/portfolio', label: 'Portfolio', icon: Briefcase },
 ];
 
@@ -45,12 +46,12 @@ export function BottomNavbar() {
             <motion.div
               className="absolute bg-gradient-to-r from-red-500 to-red-600 rounded-full shadow-lg border-2 border-red-300"
               style={{
-                width: '80px',
+                width: '70px',
                 height: '44px',
                 left: '8px',
               }}
               animate={{
-                x: currentActiveIndex * 80,
+                x: currentActiveIndex * 70,
               }}
               transition={{
                 type: "spring",
@@ -69,7 +70,7 @@ export function BottomNavbar() {
               >
                 <div
                   className={cn(
-                    'flex items-center justify-center w-20 h-11 rounded-full transition-colors duration-200',
+                    'flex items-center justify-center w-[70px] h-11 rounded-full transition-colors duration-200',
                     item.isActive
                       ? 'text-white'
                       : 'text-gray-400 hover:text-gray-600'
