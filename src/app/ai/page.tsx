@@ -203,7 +203,7 @@ export default function AI() {
             with AI
           </h1>
           <p className="text-red-100 text-sm leading-relaxed max-w-xs mx-auto">
-            Let AI find the best USDC yields for you.
+            Let AI find the best DeFi Protocol for you.
             <br />
             <span className="font-semibold">
               Optimized for maximum returns.
@@ -318,7 +318,7 @@ export default function AI() {
                 <>
                   <span>
                     Find Best{" "}
-                    {selectedStrategy === "stake" ? "Staking" : "Supply"} Yields
+                    {selectedStrategy === "stake" ? "Staking" : "Supply"} Protocols
                   </span>
                 </>
               )}
