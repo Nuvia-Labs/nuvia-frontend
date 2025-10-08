@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, ArrowDown } from "lucide-react";
+import { TrendingUp, Bot } from "lucide-react";
 import Image from "next/image";
 import Lottie from "lottie-react";
 import catLoadingAnimation from "../../../public/Images/Logo/CatLoading.json";
 import catYieldAnimation from "../../../public/Images/Logo/cat-yield.json";
+import catStakeAnimation from "../../../public/Images/Logo/cat-stake.json";
+import catSupplyAnimation from "../../../public/Images/Logo/cat-supply.json";
+import catAskAnimation from "../../../public/Images/Logo/cat-ask.json";
 
 type YieldStrategy = "stake" | "supply" | null;
 
@@ -34,24 +37,24 @@ const mockYieldOptions: Record<string, YieldOption[]> = {
       description: "Stake USDC in Aave Safety Module",
     },
     {
-      id: "compound-stake",
-      protocol: "Compound",
+      id: "morpho-stake",
+      protocol: "Morpho",
       token: "USDC",
-      apy: "7.8%",
+      apy: "9.1%",
       tvl: "$850M",
-      risk: "Low",
-      logo: "/Images/Logo/compound-logo.png",
-      description: "Stake USDC for governance rewards",
+      risk: "Medium",
+      logo: "/Images/Logo/morpho-logo.jpeg",
+      description: "Stake USDC for enhanced yield",
     },
     {
-      id: "yearn-stake",
-      protocol: "Yearn",
+      id: "moonwell-stake",
+      protocol: "Moonwell",
       token: "USDC",
-      apy: "12.4%",
+      apy: "7.5%",
       tvl: "$420M",
-      risk: "Medium",
-      logo: "/Images/Logo/yearn-logo.png",
-      description: "Auto-compounding USDC vault",
+      risk: "Low",
+      logo: "/Images/Logo/moonwell-logo.png",
+      description: "Cross-chain USDC staking rewards",
     },
   ],
   supply: [
@@ -66,24 +69,24 @@ const mockYieldOptions: Record<string, YieldOption[]> = {
       description: "Supply USDC to earn lending yield",
     },
     {
-      id: "compound-supply",
-      protocol: "Compound",
-      token: "USDC",
-      apy: "4.9%",
-      tvl: "$1.8B",
-      risk: "Low",
-      logo: "/Images/Logo/compound-logo.png",
-      description: "Supply USDC to money market",
-    },
-    {
       id: "morpho-supply",
       protocol: "Morpho",
       token: "USDC",
       apy: "6.8%",
       tvl: "$650M",
       risk: "Medium",
-      logo: "/Images/Logo/morpho-logo.png",
+      logo: "/Images/Logo/morpho-logo.jpeg",
       description: "Optimized USDC lending on Morpho",
+    },
+    {
+      id: "moonwell-supply",
+      protocol: "Moonwell",
+      token: "USDC",
+      apy: "4.9%",
+      tvl: "$380M",
+      risk: "Low",
+      logo: "/Images/Logo/moonwell-logo.png",
+      description: "Multi-chain USDC lending protocol",
     },
   ],
 };
@@ -100,9 +103,9 @@ export default function AI() {
     setIsSearching(true);
     setHasSearched(false);
 
-    // Simulate AI search - return only the best option (first one)
+    // Simulate AI search - return top 3 recommendations
     setTimeout(() => {
-      setSearchResults([mockYieldOptions[selectedStrategy][0]]);
+      setSearchResults(mockYieldOptions[selectedStrategy]);
       setIsSearching(false);
       setHasSearched(true);
     }, 2000);
@@ -210,77 +213,65 @@ export default function AI() {
       </div>
 
       {/* Content Area */}
-      <div className="bg-white rounded-t-3xl px-4 pt-6 pb-10 -mt-6 relative z-10">
+      <div className="bg-white rounded-t-3xl px-4 pt-6 pb-18 -mt-6 relative z-10">
         {/* Strategy Selection */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
+        <div className="mb-8">
+          <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
             Choose Your Strategy
           </h3>
 
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
             <motion.button
               onClick={() => setSelectedStrategy("stake")}
-              className={`w-full p-4 rounded-2xl border-2 transition-all ${
+              className={`p-4 rounded-xl border transition-all ${
                 selectedStrategy === "stake"
-                  ? "border-red-500 bg-red-50"
-                  : "border-gray-200 bg-white hover:border-gray-300"
+                  ? "border-red-500 bg-red-50 shadow-sm"
+                  : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
               }`}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <div className="flex items-center justify-between">
-                <div className="text-left">
-                  <h4 className="font-semibold text-gray-900 mb-1">
-                    Stake USDC
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Lock USDC to earn staking rewards
-                  </p>
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                  <Lottie
+                    animationData={catStakeAnimation}
+                    loop={true}
+                    className="w-full h-full"
+                  />
                 </div>
-                <div
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                    selectedStrategy === "stake"
-                      ? "border-red-500 bg-red-500"
-                      : "border-gray-300"
-                  }`}
-                >
-                  {selectedStrategy === "stake" && (
-                    <div className="w-3 h-3 bg-white rounded-full"></div>
-                  )}
-                </div>
+                <h4 className="font-semibold text-gray-900 text-sm mb-1">
+                  Stake USDC
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  Lock & earn rewards
+                </p>
               </div>
             </motion.button>
 
             <motion.button
               onClick={() => setSelectedStrategy("supply")}
-              className={`w-full p-4 rounded-2xl border-2 transition-all ${
+              className={`p-4 rounded-xl border transition-all ${
                 selectedStrategy === "supply"
-                  ? "border-red-500 bg-red-50"
-                  : "border-gray-200 bg-white hover:border-gray-300"
+                  ? "border-red-500 bg-red-50 shadow-sm"
+                  : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
               }`}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <div className="flex items-center justify-between">
-                <div className="text-left">
-                  <h4 className="font-semibold text-gray-900 mb-1">
-                    Supply USDC
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Lend USDC to earn lending interest
-                  </p>
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                  <Lottie
+                    animationData={catSupplyAnimation}
+                    loop={true}
+                    className="w-full h-full"
+                  />
                 </div>
-                <div
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                    selectedStrategy === "supply"
-                      ? "border-red-500 bg-red-500"
-                      : "border-gray-300"
-                  }`}
-                >
-                  {selectedStrategy === "supply" && (
-                    <div className="w-3 h-3 bg-white rounded-full"></div>
-                  )}
-                </div>
+                <h4 className="font-semibold text-gray-900 text-sm mb-1">
+                  Supply USDC
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  Lend & earn interest
+                </p>
               </div>
             </motion.button>
           </div>
@@ -395,23 +386,30 @@ export default function AI() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-3"
           >
-            {searchResults.map((option) => (
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <Bot size={20} className="text-black" />
+              <h3 className="text-lg font-semibold text-gray-900">
+                AI Recommendations
+              </h3>
+            </div>
+
+            {searchResults.map((option, index) => (
               <motion.div
                 key={option.id}
-                className="bg-white rounded-2xl p-6 border border-gray-100"
+                className="bg-white rounded-2xl p-6 border border-gray-100 mb-4"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
+                transition={{ duration: 0.4, delay: 0.1 * index }}
               >
                 {/* Protocol Header */}
                 <div className="text-center mb-6">
-                  <div className="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center mx-auto mb-3">
+                  <div className="w-12 h-12 mx-auto mb-3">
                     <Image
-                      src="/Images/Logo/nuvia-logo.png"
+                      src={option.logo}
                       alt={option.protocol}
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 object-contain"
+                      width={48}
+                      height={48}
+                      className="w-full h-full object-contain rounded-full"
                     />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-1">
@@ -423,7 +421,7 @@ export default function AI() {
                 </div>
 
                 {/* Stats Row */}
-                <div className="flex items-center justify-between mb-6">
+                <div className={`flex items-center justify-between ${option.risk === 'Medium' ? 'mb-12' : 'mb-6'}`}>
                   {/* APY */}
                   <div className="text-center flex-1">
                     <div className="flex items-center justify-center space-x-1 mb-1">
@@ -469,7 +467,13 @@ export default function AI() {
         {/* Initial State */}
         {!selectedStrategy && (
           <div className="text-center py-8">
-            <ArrowDown size={48} className="text-gray-300 mx-auto mb-4" />
+            <div className="w-12 h-12 mx-auto mb-4">
+              <Lottie
+                animationData={catAskAnimation}
+                loop={true}
+                className="w-full h-full"
+              />
+            </div>
             <h3 className="font-semibold text-gray-900 mb-2">
               Select a strategy above
             </h3>
