@@ -18,7 +18,7 @@ export function TopNavbar() {
             />
           </div>
           
-          <WalletConnect />
+          <WalletConnect variant="compact" />
         </div>
       </div>
     </nav>
