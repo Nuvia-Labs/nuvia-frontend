@@ -1,0 +1,172 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { TrendingUp, Bot, Target, Shield } from 'lucide-react';
+import Image from 'next/image';
+
+interface StrategyResultsProps {
+  data: {
+    strategy_id: string;
+    allocations: Record<string, number>;
+    expected_apy: number;
+    risk_score: number;
+    risk_tolerance: string;
+    reasoning: string;
+    diversification_score: number;
+    comparison: {
+      current_apy: number;
+      proposed_apy: number;
+      apy_improvement: number;
+      changes: Array<{
+        protocol: string;
+        change: number;
+        direction: string;
+      }>;
+      recommendation: string;
+    };
+  };
+}
+
+const protocolLogos: Record<string, string> = {
+  'Aerodrome': '/Images/Logo/aerodrome-logo.svg',
+  'Moonwell': '/Images/Logo/moonwell-logo.png',
+  'Aave V3': '/Images/Logo/aave-logo.png',
+  'Aave': '/Images/Logo/aave-logo.png',
+  'Seamless': '/Images/Logo/nuvia-logo.png',
+  'Morpho': '/Images/Logo/morpho-logo.jpeg',
+};
+
+export function StrategyResults({ data }: StrategyResultsProps) {
+  const getRiskColor = (score: number) => {
+    if (score <= 3) return { color: '#10b981', bg: '#dcfce7', label: 'Low Risk' };
+    if (score <= 7) return { color: '#f59e0b', bg: '#fef3c7', label: 'Medium Risk' };
+    return { color: '#ef4444', bg: '#fecaca', label: 'High Risk' };
+  };
+
+  const riskData = getRiskColor(data.risk_score);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-4"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-center space-x-2 mb-6">
+        <Bot size={20} className="text-red-500" />
+        <h3 className="text-lg font-semibold text-gray-900">
+          AI Strategy Recommendation
+        </h3>
+      </div>
+
+      {/* Main Strategy Card */}
+      <motion.div
+        className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        {/* Key Metrics */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-1 mb-1">
+              <TrendingUp size={16} className="text-green-500" />
+              <span className="text-xl font-bold text-green-600">
+                {data.expected_apy.toFixed(2)}%
+              </span>
+            </div>
+            <p className="text-xs text-gray-500">Expected APY</p>
+          </div>
+
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-1 mb-1">
+              <Shield size={16} style={{ color: riskData.color }} />
+              <span className="text-lg font-bold" style={{ color: riskData.color }}>
+                {data.risk_score.toFixed(1)}
+              </span>
+            </div>
+            <p className="text-xs text-gray-500">{riskData.label}</p>
+          </div>
+
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-1 mb-1">
+              <Target size={16} className="text-blue-500" />
+              <span className="text-lg font-bold text-blue-600">
+                {data.diversification_score}
+              </span>
+            </div>
+            <p className="text-xs text-gray-500">Protocols</p>
+          </div>
+        </div>
+
+        {/* APY Improvement */}
+        {data.comparison.apy_improvement > 0 && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+            <div className="flex items-center justify-center space-x-2">
+              <TrendingUp size={16} className="text-green-600" />
+              <span className="text-sm font-medium text-green-800">
+                +{data.comparison.apy_improvement.toFixed(2)}% APY Improvement
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Reasoning */}
+        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+          <h4 className="font-medium text-gray-900 mb-2">AI Analysis</h4>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            {data.reasoning}
+          </p>
+        </div>
+
+        {/* Protocol Allocations */}
+        <div>
+          <h4 className="font-medium text-gray-900 mb-3">Portfolio Allocation</h4>
+          <div className="space-y-3">
+            {Object.entries(data.allocations).map(([protocol, percentage]) => (
+              <div key={protocol} className="flex items-center space-x-3">
+                <div className="w-8 h-8 flex-shrink-0">
+                  <Image
+                    src={protocolLogos[protocol] || '/Images/Logo/nuvia-logo.png'}
+                    alt={protocol}
+                    width={32}
+                    height={32}
+                    className="w-full h-full object-contain rounded-full"
+                  />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium text-gray-900">
+                      {protocol}
+                    </span>
+                    <span className="text-sm font-medium text-gray-700">
+                      {percentage}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-red-500 h-2 rounded-full transition-all duration-1000"
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Execute Button */}
+      <motion.button
+        className="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-medium flex items-center justify-center space-x-2"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
+        <span>Execute Strategy</span>
+      </motion.button>
+    </motion.div>
+  );
+}
