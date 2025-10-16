@@ -133,16 +133,3 @@ export const mockApiResponses = {
   }
 };
 
-// Mock wallet balances for demo
-export const mockWalletBalances: Record<string, Record<string, number>> = {
-  // Default demo wallet
-  '0x1234567890abcdef1234567890abcdef12345678': {
-    'cbBTC': 0.5,
-    'cbETH': 2.5,
-    'USDC': 5000
-  }
-};
-
-export const checkMockBalance = (walletAddress: string, symbol: string): number => {
-  return mockWalletBalances[walletAddress]?.[symbol] || 0;
-};

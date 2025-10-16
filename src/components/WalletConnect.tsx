@@ -1,46 +1,83 @@
 'use client';
 
-import { User } from '@/lib/types';
-import { truncateAddress } from '@/lib/utils';
-import { Button } from '@/components/ui';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 interface WalletConnectProps {
-  user: User | null;
-  isConnecting: boolean;
-  onConnect: () => void;
-  onDisconnect: () => void;
+  className?: string;
 }
 
-export function WalletConnect({ user, isConnecting, onConnect, onDisconnect }: WalletConnectProps) {
-  if (user) {
-    return (
-      <div className="flex items-center space-x-3">
-        <div className="flex items-center space-x-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          <span className="text-sm font-medium text-green-700">
-            {truncateAddress(user.walletAddress)}
-          </span>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onDisconnect}
-        >
-          Disconnect
-        </Button>
-      </div>
-    );
-  }
-
+export function WalletConnect({ className }: WalletConnectProps) {
   return (
-    <Button
-      variant="primary"
-      size="md"
-      onClick={onConnect}
-      isLoading={isConnecting}
-      disabled={isConnecting}
-    >
-      {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-    </Button>
+    <div className={className}>
+      <ConnectButton.Custom>
+        {({
+          account,
+          chain,
+          openAccountModal,
+          openChainModal,
+          openConnectModal,
+          authenticationStatus,
+          mounted,
+        }) => {
+          const ready = mounted && authenticationStatus !== 'loading';
+          const connected =
+            ready &&
+            account &&
+            chain &&
+            (!authenticationStatus ||
+              authenticationStatus === 'authenticated');
+
+          return (
+            <div
+              {...(!ready && {
+                'aria-hidden': true,
+                'style': {
+                  opacity: 0,
+                  pointerEvents: 'none',
+                  userSelect: 'none',
+                },
+              })}
+            >
+              {(() => {
+                if (!connected) {
+                  return (
+                    <button
+                      onClick={openConnectModal}
+                      type="button"
+                      className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium transition-all shadow-sm hover:shadow-md border border-red-600"
+                    >
+                      Connect
+                    </button>
+                  );
+                }
+
+                if (chain.unsupported) {
+                  return (
+                    <button
+                      onClick={openChainModal}
+                      type="button"
+                      className="bg-orange-500 hover:bg-orange-600 text-white px-2 py-1 rounded-full text-xs font-medium transition-all shadow-sm hover:shadow-md border border-orange-600"
+                    >
+                      Wrong network
+                    </button>
+                  );
+                }
+
+                return (
+                  <button
+                    onClick={openAccountModal}
+                    type="button"
+                    className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-full text-xs font-medium transition-all shadow-sm hover:shadow-md border border-red-600 flex items-center gap-1"
+                  >
+                    <div className="w-3 h-3 bg-white rounded-full" />
+                    <span className="hidden sm:inline">{account.displayName}</span>
+                  </button>
+                );
+              })()}
+            </div>
+          );
+        }}
+      </ConnectButton.Custom>
+    </div>
   );
 }

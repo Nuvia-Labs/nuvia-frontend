@@ -1,8 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TrendingUp, Bot, Target, Shield } from 'lucide-react';
+import { TrendingUp, Bot, Target, Shield, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { useExecuteStrategy } from '@/hooks/useExecuteStrategy';
+import { SuccessNotification } from '@/components/SuccessNotification';
 
 interface StrategyResultsProps {
   data: {
@@ -25,6 +28,7 @@ interface StrategyResultsProps {
       recommendation: string;
     };
   };
+  amount: number;
 }
 
 const protocolLogos: Record<string, string> = {
@@ -36,7 +40,10 @@ const protocolLogos: Record<string, string> = {
   'Morpho': '/Images/Logo/morpho-logo.jpeg',
 };
 
-export function StrategyResults({ data }: StrategyResultsProps) {
+export function StrategyResults({ data, amount }: StrategyResultsProps) {
+  const { executeStrategy, isLoading, isCompleted, hasError, errorMessage, step, reset } = useExecuteStrategy();
+  const [showSuccessNotification, setShowSuccessNotification] = useState(false);
+
   const getRiskColor = (score: number) => {
     if (score <= 3) return { color: '#10b981', bg: '#dcfce7', label: 'Low Risk' };
     if (score <= 7) return { color: '#f59e0b', bg: '#fef3c7', label: 'Medium Risk' };
@@ -44,6 +51,35 @@ export function StrategyResults({ data }: StrategyResultsProps) {
   };
 
   const riskData = getRiskColor(data.risk_score);
+
+  const handleExecuteStrategy = () => {
+    executeStrategy(amount);
+  };
+
+  useEffect(() => {
+    if (isCompleted) {
+      setShowSuccessNotification(true);
+    }
+  }, [isCompleted]);
+
+  const handleCloseSuccessNotification = () => {
+    setShowSuccessNotification(false);
+    reset();
+  };
+
+  const getButtonText = () => {
+    if (isCompleted) return 'Strategy Executed Successfully!';
+    if (hasError) return 'Retry Strategy Execution';
+    if (step === 'approving') return 'Approving USDC...';
+    if (step === 'depositing') return 'Depositing to Vault...';
+    return 'Execute Strategy';
+  };
+
+  const getButtonColor = () => {
+    if (isCompleted) return 'from-green-500 to-green-600';
+    if (hasError) return 'from-orange-500 to-orange-600';
+    return 'from-red-500 to-red-600';
+  };
 
   return (
     <motion.div
@@ -66,7 +102,6 @@ export function StrategyResults({ data }: StrategyResultsProps) {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
       >
-        {/* Key Metrics */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
@@ -156,17 +191,40 @@ export function StrategyResults({ data }: StrategyResultsProps) {
         </div>
       </motion.div>
 
+      {/* Error Message */}
+      {hasError && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4"
+        >
+          <p className="text-red-700 text-sm text-center">
+            {errorMessage}
+          </p>
+        </motion.div>
+      )}
+
       {/* Execute Button */}
       <motion.button
-        className="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-medium flex items-center justify-center space-x-2"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        onClick={hasError ? reset : handleExecuteStrategy}
+        disabled={isLoading}
+        className={`w-full py-4 bg-gradient-to-r ${getButtonColor()} text-white rounded-2xl font-medium flex items-center justify-center space-x-2 disabled:opacity-50`}
+        whileHover={{ scale: isLoading ? 1 : 1.02 }}
+        whileTap={{ scale: isLoading ? 1 : 0.98 }}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.2 }}
       >
-        <span>Execute Strategy</span>
+        {isLoading && <Loader2 size={16} className="animate-spin" />}
+        <span>{getButtonText()}</span>
       </motion.button>
+
+      <SuccessNotification
+        isVisible={showSuccessNotification}
+        onClose={handleCloseSuccessNotification}
+        title="Strategy Executed!"
+        message={`Successfully executed AI strategy with $${amount.toLocaleString()} investment. Your funds are now optimally allocated across ${Object.keys(data.allocations).length} protocols.`}
+      />
     </motion.div>
   );
 }

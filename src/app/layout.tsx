@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/Navbar';
+import { Providers } from '@/components/Providers';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -43,7 +44,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={inter.variable}>
       <head>
-        {/* Farcaster Frame metadata */}
         <meta property="fc:frame" content="vNext" />
         <meta property="fc:frame:image" content="/preview.png" />
         <meta property="fc:frame:button:1" content="Open App" />
@@ -51,12 +51,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta property="fc:frame:button:1:target" content={process.env.NEXT_PUBLIC_APP_URL} />
       </head>
       <body className="font-inter antialiased bg-white min-h-screen">
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
-          <main className="flex-1 pb-20">
-            {children}
-          </main>
-        </div>
+        <Providers>
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main className="flex-1 pb-20">
+              {children}
+            </main>
+          </div>
+        </Providers>
       </body>
     </html>
   );

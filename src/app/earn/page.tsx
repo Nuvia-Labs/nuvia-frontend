@@ -14,8 +14,8 @@ import walletAnimation from "../../../public/Images/Logo/wallet_animation.json";
 
 export default function Earn() {
   const router = useRouter();
-  const { user, isConnected } = useWallet();
-  const { getTotalDepositedByAsset } = useDeposits(user?.farcasterFid);
+  const { address, isConnected } = useWallet();
+  const { getTotalDepositedByAsset } = useDeposits(address || '');
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -152,7 +152,7 @@ export default function Earn() {
             <h3 className="font-semibold text-gray-900 mb-2">
               Connect your wallet to start earning
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 mb-4">
               Connect your wallet to deposit assets and start earning yield
             </p>
           </div>

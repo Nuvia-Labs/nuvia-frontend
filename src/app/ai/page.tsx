@@ -101,7 +101,7 @@ export default function AI() {
 
         {/* Search Results */}
         {hasSearched && !isLoading && data && (
-          <StrategyResults data={data} />
+          <StrategyResults data={data} amount={amount} />
         )}
 
         {/* Initial State */}
