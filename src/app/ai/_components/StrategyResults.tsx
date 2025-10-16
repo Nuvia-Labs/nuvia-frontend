@@ -85,61 +85,61 @@ export function StrategyResults({ data, amount }: StrategyResultsProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-4"
+      className="space-y-3"
     >
       {/* Header */}
-      <div className="flex items-center justify-center space-x-2 mb-6">
-        <Bot size={20} className="text-red-500" />
-        <h3 className="text-lg font-semibold text-gray-900">
+      <div className="flex items-center justify-center space-x-2 mb-3">
+        <Bot size={16} className="text-red-500" />
+        <h3 className="text-base font-semibold text-gray-900">
           AI Strategy Recommendation
         </h3>
       </div>
 
       {/* Main Strategy Card */}
       <motion.div
-        className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm"
+        className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm"
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
       >
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-2 gap-2 mb-3">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
-              <TrendingUp size={16} className="text-green-500" />
-              <span className="text-xl font-bold text-green-600">
+              <TrendingUp size={14} className="text-green-500" />
+              <span className="text-base font-bold text-green-600">
                 {data.expected_apy.toFixed(2)}%
               </span>
             </div>
-            <p className="text-xs text-gray-500">Expected APY</p>
+            <p className="text-xs text-gray-500 mt-0.5">Expected APY</p>
           </div>
 
           <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
-              <Shield size={16} style={{ color: riskData.color }} />
-              <span className="text-lg font-bold" style={{ color: riskData.color }}>
+              <Shield size={14} style={{ color: riskData.color }} />
+              <span className="text-base font-bold" style={{ color: riskData.color }}>
                 {data.risk_score.toFixed(1)}
               </span>
             </div>
-            <p className="text-xs text-gray-500">{riskData.label}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{riskData.label}</p>
           </div>
 
-          <div className="text-center">
+          {/* <div className="text-center">
             <div className="flex items-center justify-center space-x-1 mb-1">
-              <Target size={16} className="text-blue-500" />
-              <span className="text-lg font-bold text-blue-600">
+              <Target size={14} className="text-blue-500" />
+              <span className="text-base font-bold text-blue-600">
                 {data.diversification_score}
               </span>
             </div>
-            <p className="text-xs text-gray-500">Protocols</p>
-          </div>
+            <p className="text-xs text-gray-500 mt-0.5">Score Protocols</p>
+          </div> */}
         </div>
 
         {/* APY Improvement */}
         {data.comparison.apy_improvement > 0 && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-            <div className="flex items-center justify-center space-x-2">
-              <TrendingUp size={16} className="text-green-600" />
-              <span className="text-sm font-medium text-green-800">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-2 mb-2">
+            <div className="flex items-center justify-center space-x-1.5">
+              <TrendingUp size={14} className="text-red-600" />
+              <span className="text-sm font-medium text-red-800">
                 +{data.comparison.apy_improvement.toFixed(2)}% APY Improvement
               </span>
             </div>
@@ -147,8 +147,8 @@ export function StrategyResults({ data, amount }: StrategyResultsProps) {
         )}
 
         {/* Reasoning */}
-        <div className="bg-gray-50 rounded-lg p-4 mb-4">
-          <h4 className="font-medium text-gray-900 mb-2">AI Analysis</h4>
+        <div className="bg-gray-50 rounded-lg p-2.5 mb-3">
+          <h4 className="font-medium text-gray-900 mb-1 text-sm">AI Analysis</h4>
           <p className="text-sm text-gray-700 leading-relaxed">
             {data.reasoning}
           </p>
@@ -156,21 +156,21 @@ export function StrategyResults({ data, amount }: StrategyResultsProps) {
 
         {/* Protocol Allocations */}
         <div>
-          <h4 className="font-medium text-gray-900 mb-3">Portfolio Allocation</h4>
-          <div className="space-y-3">
+          <h4 className="font-medium text-gray-900 mb-2 text-sm">Portfolio Allocation</h4>
+          <div className="space-y-2">
             {Object.entries(data.allocations).map(([protocol, percentage]) => (
-              <div key={protocol} className="flex items-center space-x-3">
-                <div className="w-8 h-8 flex-shrink-0">
+              <div key={protocol} className="flex items-center space-x-2.5">
+                <div className="w-7 h-7 flex-shrink-0">
                   <Image
                     src={protocolLogos[protocol] || '/Images/Logo/nuvia-logo.png'}
                     alt={protocol}
-                    width={32}
-                    height={32}
+                    width={28}
+                    height={28}
                     className="w-full h-full object-contain rounded-full"
                   />
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center justify-between mb-0.5">
                     <span className="text-sm font-medium text-gray-900">
                       {protocol}
                     </span>
@@ -178,9 +178,9 @@ export function StrategyResults({ data, amount }: StrategyResultsProps) {
                       {percentage}%
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-1.5">
                     <div
-                      className="bg-red-500 h-2 rounded-full transition-all duration-1000"
+                      className="bg-red-500 h-1.5 rounded-full transition-all duration-1000"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
@@ -196,7 +196,7 @@ export function StrategyResults({ data, amount }: StrategyResultsProps) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4"
+          className="bg-red-50 border border-red-200 rounded-lg p-3 mb-3"
         >
           <p className="text-red-700 text-sm text-center">
             {errorMessage}
@@ -208,7 +208,7 @@ export function StrategyResults({ data, amount }: StrategyResultsProps) {
       <motion.button
         onClick={hasError ? reset : handleExecuteStrategy}
         disabled={isLoading}
-        className={`w-full py-4 bg-gradient-to-r ${getButtonColor()} text-white rounded-2xl font-medium flex items-center justify-center space-x-2 disabled:opacity-50`}
+        className={`w-full py-3.5 bg-gradient-to-r ${getButtonColor()} text-white rounded-xl font-medium flex items-center justify-center space-x-2 disabled:opacity-50`}
         whileHover={{ scale: isLoading ? 1 : 1.02 }}
         whileTap={{ scale: isLoading ? 1 : 0.98 }}
         initial={{ y: 20, opacity: 0 }}

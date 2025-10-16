@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useGetRecommentStrategy } from '@/hooks/useGetRecommentStrategy';
+import { useLoading } from '@/contexts/LoadingContext';
 import { HeroSection } from './_components/HeroSection';
 import { StrategySelector } from './_components/StrategySelector';
 import { AmountInput } from './_components/AmountInput';
-import { LoadingScreen } from './_components/LoadingScreen';
 import { StrategyResults } from './_components/StrategyResults';
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
@@ -19,6 +19,23 @@ export default function AI() {
   const [hasSearched, setHasSearched] = useState(false);
   
   const { data, isLoading, error, fetchRecommendedStrategy } = useGetRecommentStrategy();
+  const { setGlobalLoading } = useLoading();
+
+  useEffect(() => {
+    setGlobalLoading(isLoading);
+  }, [isLoading, setGlobalLoading]);
+
+  useEffect(() => {
+    if (hasSearched && !isLoading && data) {
+      const strategySection = document.getElementById('strategy-results');
+      if (strategySection) {
+        strategySection.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }
+  }, [hasSearched, isLoading, data]);
 
   const handleGetRecommendation = async () => {
     if (!selectedStrategy) return;
@@ -83,8 +100,6 @@ export default function AI() {
           </motion.div>
         )}
 
-        {/* Loading Screen */}
-        <LoadingScreen isVisible={isLoading} />
 
         {/* Error Message */}
         {error && (
@@ -101,7 +116,9 @@ export default function AI() {
 
         {/* Search Results */}
         {hasSearched && !isLoading && data && (
-          <StrategyResults data={data} amount={amount} />
+          <div id="strategy-results">
+            <StrategyResults data={data} amount={amount} />
+          </div>
         )}
 
         {/* Initial State */}

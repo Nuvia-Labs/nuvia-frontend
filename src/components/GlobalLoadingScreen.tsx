@@ -3,22 +3,20 @@
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
+import { useLoading } from '@/contexts/LoadingContext';
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
-import catLoadingAnimation from '../../../../public/Images/Logo/CatLoading.json';
+import catLoadingAnimation from '../../public/Images/Logo/CatLoading.json';
 
-interface LoadingScreenProps {
-  isVisible: boolean;
-}
-
-export function LoadingScreen({ isVisible }: LoadingScreenProps) {
+export function GlobalLoadingScreen() {
   const [isMounted, setIsMounted] = useState(false);
+  const { isGlobalLoading } = useLoading();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  if (!isVisible) return null;
+  if (!isGlobalLoading) return null;
 
   return (
     <motion.div
@@ -26,7 +24,7 @@ export function LoadingScreen({ isVisible }: LoadingScreenProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[99999] flex items-center justify-center"
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99999 }}
     >
       <div className="text-center px-4">
         <motion.div

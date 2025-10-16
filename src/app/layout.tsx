@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/Navbar';
 import { Providers } from '@/components/Providers';
+import { LoadingProvider } from '@/contexts/LoadingContext';
+import { GlobalLoadingScreen } from '@/components/GlobalLoadingScreen';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -52,12 +54,15 @@ export default function RootLayout({ children }: RootLayoutProps) {
       </head>
       <body className="font-inter antialiased bg-white min-h-screen">
         <Providers>
-          <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1 pb-20">
-              {children}
-            </main>
-          </div>
+          <LoadingProvider>
+            <div className="min-h-screen flex flex-col">
+              <Navbar />
+              <main className="flex-1 pb-20">
+                {children}
+              </main>
+            </div>
+            <GlobalLoadingScreen />
+          </LoadingProvider>
         </Providers>
       </body>
     </html>
