@@ -25,7 +25,7 @@ interface LiquidityPulseResponse {
   protocols: Protocol[];
 }
 
-export function useGetLiquidityPulse() {
+export function useGetLiquidityPulse(enabled: boolean = true) {
   const [data, setData] = useState<LiquidityPulseResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,8 +52,10 @@ export function useGetLiquidityPulse() {
   };
 
   useEffect(() => {
-    fetchLiquidityPulse();
-  }, []);
+    if (enabled) {
+      fetchLiquidityPulse();
+    }
+  }, [enabled]);
 
   return {
     data,

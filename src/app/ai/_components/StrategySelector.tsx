@@ -38,7 +38,7 @@ export function StrategySelector({ selectedStrategy, onStrategySelect }: Strateg
   return (
     <div className="mb-8">
       <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
-        Choose Your Strategy
+        Choose Your Risk
       </h3>
 
       <div className="grid grid-cols-2 gap-3">

@@ -1,36 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { sdk } from '@farcaster/miniapp-sdk';
 
-export default function Home() {
+export default function SplashScreen() {
   const router = useRouter();
-  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        console.log("Initializing Farcaster miniapp...");
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
-        // Call ready immediately
-        console.log("Calling sdk.actions.ready()...");
-        sdk.actions.ready();
-        console.log("SDK ready called successfully");
+        await sdk.actions.ready();
         
-        setIsReady(true);
-        
-        // Wait for splash screen to show, then navigate
-        setTimeout(() => {
-          router.replace("/earn");
-        }, 2500);
+        router.replace("/earn");
       } catch (error) {
         console.error("Failed to initialize miniapp:", error);
-        setIsReady(true);
-        setTimeout(() => {
-          router.replace("/earn");
-        }, 2500);
+        router.replace("/earn");
       }
     };
 
@@ -61,10 +49,6 @@ export default function Home() {
           <div className="w-2 h-2 bg-white rounded-full animate-pulse delay-150"></div>
           <div className="w-2 h-2 bg-white rounded-full animate-pulse delay-300"></div>
         </div>
-        
-        {isReady && (
-          <div className="text-white/60 text-sm">Loading...</div>
-        )}
       </div>
     </div>
   );

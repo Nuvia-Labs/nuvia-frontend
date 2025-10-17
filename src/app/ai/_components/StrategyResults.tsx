@@ -136,10 +136,10 @@ export function StrategyResults({ data, amount }: StrategyResultsProps) {
 
         {/* APY Improvement */}
         {data.comparison.apy_improvement > 0 && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-2 mb-2">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-2 mb-2">
             <div className="flex items-center justify-center space-x-1.5">
-              <TrendingUp size={14} className="text-red-600" />
-              <span className="text-sm font-medium text-red-800">
+              <TrendingUp size={14} className="text-green-600" />
+              <span className="text-sm font-medium text-green-800">
                 +{data.comparison.apy_improvement.toFixed(2)}% APY Improvement
               </span>
             </div>

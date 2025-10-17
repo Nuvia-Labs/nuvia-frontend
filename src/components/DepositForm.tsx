@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Asset } from '@/lib/types';
-import { formatAPR, formatTokenAmount, validateDepositAmount, calculateYieldBreakdown } from '@/lib/utils';
+import { formatAPR, formatTokenAmount } from '@/lib/utils';
 import { Card, CardHeader, CardContent, CardFooter, Button, Input } from '@/components/ui';
 
 interface DepositFormProps {
@@ -17,8 +17,35 @@ export function DepositForm({ asset, balance, onDeposit, onCancel, isLoading = f
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  // Validate deposit amount
+  const validateDepositAmount = (amount: string, balance: number) => {
+    if (!amount || amount === '') {
+      return { isValid: false, error: null };
+    }
+
+    const numAmount = parseFloat(amount);
+    
+    if (isNaN(numAmount) || numAmount <= 0) {
+      return { isValid: false, error: 'Please enter a valid amount' };
+    }
+
+    if (numAmount > balance) {
+      return { isValid: false, error: 'Insufficient balance' };
+    }
+
+    return { isValid: true, error: null };
+  };
+
   // Calculate yield breakdown when amount changes
   const numAmount = parseFloat(amount) || 0;
+  const calculateYieldBreakdown = (amount: number, apr: number) => {
+    const yearlyYield = amount * (apr / 100);
+    return {
+      daily: yearlyYield / 365,
+      monthly: yearlyYield / 12,
+      yearly: yearlyYield
+    };
+  };
   const yieldBreakdown = calculateYieldBreakdown(numAmount, asset.apr);
 
   // Validate amount on change
@@ -166,11 +193,10 @@ export function DepositForm({ asset, balance, onDeposit, onCancel, isLoading = f
           </Button>
           <Button
             type="submit"
-            variant="primary"
+            variant="default"
             size="lg"
             className="flex-1"
             disabled={!isValid || isLoading}
-            isLoading={isLoading}
           >
             {isLoading ? 'Processing...' : 'Confirm Deposit'}
           </Button>

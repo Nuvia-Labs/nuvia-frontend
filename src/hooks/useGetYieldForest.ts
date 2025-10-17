@@ -17,7 +17,7 @@ interface YieldForestResponse {
   forecasts: YieldForecast[];
 }
 
-export function useGetYieldForest() {
+export function useGetYieldForest(enabled: boolean = true) {
   const [data, setData] = useState<YieldForestResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,8 +44,10 @@ export function useGetYieldForest() {
   };
 
   useEffect(() => {
-    fetchYieldForest();
-  }, []);
+    if (enabled) {
+      fetchYieldForest();
+    }
+  }, [enabled]);
 
   return {
     data,

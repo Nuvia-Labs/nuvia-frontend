@@ -23,6 +23,15 @@ export default function AI() {
 
   useEffect(() => {
     setGlobalLoading(isLoading);
+    
+    // Safety timeout: force stop global loading after 10 seconds
+    if (isLoading) {
+      const timeout = setTimeout(() => {
+        setGlobalLoading(false);
+      }, 10000);
+      
+      return () => clearTimeout(timeout);
+    }
   }, [isLoading, setGlobalLoading]);
 
   useEffect(() => {
@@ -36,6 +45,19 @@ export default function AI() {
       }
     }
   }, [hasSearched, isLoading, data]);
+
+  // Force stop global loading on unmount or error
+  useEffect(() => {
+    return () => {
+      setGlobalLoading(false);
+    };
+  }, [setGlobalLoading]);
+
+  useEffect(() => {
+    if (error) {
+      setGlobalLoading(false);
+    }
+  }, [error, setGlobalLoading]);
 
   const handleGetRecommendation = async () => {
     if (!selectedStrategy) return;

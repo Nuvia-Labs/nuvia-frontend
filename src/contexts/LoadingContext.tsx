@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 
 interface LoadingContextType {
   isGlobalLoading: boolean;
@@ -10,7 +10,35 @@ interface LoadingContextType {
 const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
 export function LoadingProvider({ children }: { children: ReactNode }) {
-  const [isGlobalLoading, setGlobalLoading] = useState(false);
+  const [isGlobalLoading, setIsGlobalLoading] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const setGlobalLoading = (loading: boolean) => {
+    setIsGlobalLoading(loading);
+    
+    // Clear existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    
+    // Set auto-reset timeout when loading starts
+    if (loading) {
+      timeoutRef.current = setTimeout(() => {
+        setIsGlobalLoading(false);
+        timeoutRef.current = null;
+      }, 15000); // 15 second safety timeout
+    }
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <LoadingContext.Provider value={{ isGlobalLoading, setGlobalLoading }}>
