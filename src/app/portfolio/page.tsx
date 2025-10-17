@@ -4,55 +4,58 @@ import { motion } from "framer-motion";
 import Lottie from "lottie-react";
 import moneyAnimation from "../../../public/Images/Logo/Money-animated.json";
 import Image from "next/image";
+import { useWallet } from "@/hooks/useWallet";
+import { useUSDCBalance } from "@/hooks/useUSDCBalance";
 
-const userDeposits = [
+const getStaticDeposits = (usdcBalance: string) => [
   {
     id: 1,
     token: "cbBTC",
     name: "Coinbase Bitcoin",
     logo: "/Images/Logo/cbbtc-logo.webp",
-    amount: "0.045",
-    valueUSD: "2,856.30",
+    amount: "0",
+    valueUSD: "0.00",
     gain: "+0.00",
     apy: "8.5%",
-    airdropLogo: "/Images/Logo/aerodrome-logo.svg",
-    farmingOn: "Aerodrome",
-    points: "1,274",
+    protocol: "Moonwell",
+    protocolLogo: "/Images/Logo/moonwell-logo.png",
   },
   {
     id: 2,
     token: "cbETH",
-    name: "Coinbase Ethereum",
+    name: "Coinbase Ethereum", 
     logo: "/Images/Logo/cbeth-logo.png",
-    amount: "0.8",
-    valueUSD: "2,184.50",
+    amount: "0",
+    valueUSD: "0.00",
     gain: "+0.00",
     apy: "6.7%",
-    airdropLogo: "/Images/Logo/moonwell-logo.png",
-    farmingOn: "Moonwell",
-    points: "932",
+    protocol: "Aave",
+    protocolLogo: "/Images/Logo/aave-logo.png",
   },
   {
     id: 3,
     token: "USDC",
     name: "USD Coin",
     logo: "/Images/Logo/usdc-logo.png",
-    amount: "1,500",
-    valueUSD: "1,500.00",
+    amount: parseFloat(usdcBalance).toFixed(2),
+    valueUSD: parseFloat(usdcBalance).toFixed(2),
     gain: "+0.00",
     apy: "5.3%",
-    airdropLogo: "/Images/Logo/ethena-logo.png",
-    farmingOn: "Ethena",
-    points: "186",
+    protocol: "Aerodrome",
+    protocolLogo: "/Images/Logo/aerodrome-logo.svg",
   },
 ];
 
-const totalDeposited = userDeposits.reduce(
-  (sum, item) => sum + parseFloat(item.valueUSD.replace(",", "")),
-  0
-);
-
 export default function Portfolio() {
+  const { address } = useWallet();
+  const { balance: usdcBalance, isLoading: isLoadingBalance } = useUSDCBalance(address);
+  
+  const userDeposits = getStaticDeposits(usdcBalance || "0");
+  
+  const totalDeposited = userDeposits.reduce(
+    (sum, item) => sum + parseFloat(item.valueUSD.replace(",", "")),
+    0
+  );
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-red-500 to-red-700">
       {/* Hero Section with Character */}
@@ -82,7 +85,7 @@ export default function Portfolio() {
         >
           <p className="text-white/80 text-sm mb-2">Total deposited</p>
           <p className="text-4xl font-bold text-white mb-2">
-            ${totalDeposited.toLocaleString()}.00
+            {isLoadingBalance ? "Loading..." : `$${totalDeposited.toLocaleString()}`}
           </p>
           <p className="text-red-200 text-lg">+$0.00</p>
         </motion.div>
@@ -131,13 +134,13 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Farming Info */}
+              {/* Protocol Info */}
               <div className="bg-gray-50 rounded-lg p-2">
-                <div className="flex items-center space-x-3 mb-2">
+                <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 rounded-full overflow-hidden">
                     <Image
-                      src="/Images/Logo/nuvia-logo.png"
-                      alt="Nuvia"
+                      src={deposit.protocolLogo}
+                      alt={deposit.protocol}
                       width={32}
                       height={32}
                       className="w-full h-full object-cover"
@@ -145,140 +148,12 @@ export default function Portfolio() {
                   </div>
                   <div>
                     <p className="text-xs font-medium text-gray-900">
-                      {deposit.valueUSD} {deposit.token}
+                      {deposit.amount} {deposit.token}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {deposit.token === "cbBTC"
-                        ? "cbBTC vault"
-                        : deposit.token === "cbETH"
-                        ? "cbETH vault"
-                        : "USDC vault"}
+                      {deposit.protocol} vault
                     </p>
                   </div>
-                </div>
-
-                {/* Airdrop Points Logos */}
-                <div className="flex items-center space-x-2 mt-1">
-                  {deposit.token === "cbBTC" && (
-                    <>
-                      <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
-                        <div className="w-4 h-4 rounded-full overflow-hidden">
-                          <Image
-                            src="/Images/Logo/etherfi-logo.png"
-                            alt="EtherFi"
-                            width={16}
-                            height={16}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs text-gray-700">2x</span>
-                      </div>
-                      <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
-                        <div className="w-4 h-4 rounded-full overflow-hidden">
-                          <Image
-                            src="/Images/Logo/aerodrome-logo.svg"
-                            alt="Aerodrome"
-                            width={16}
-                            height={16}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs text-gray-700">1x</span>
-                      </div>
-                      <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
-                        <div className="w-4 h-4 rounded-full overflow-hidden">
-                          <Image
-                            src="/Images/Logo/moonwell-logo.png"
-                            alt="Moonwell"
-                            width={16}
-                            height={16}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs text-gray-700">1x</span>
-                      </div>
-                    </>
-                  )}
-                  {deposit.token === "cbETH" && (
-                    <>
-                      <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
-                        <div className="w-4 h-4 rounded-full overflow-hidden">
-                          <Image
-                            src="/Images/Logo/aerodrome-logo.svg"
-                            alt="Aerodrome"
-                            width={16}
-                            height={16}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs text-gray-700">3x</span>
-                      </div>
-                      <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
-                        <div className="w-4 h-4 rounded-full overflow-hidden">
-                          <Image
-                            src="/Images/Logo/etherfi-logo.png"
-                            alt="EtherFi"
-                            width={16}
-                            height={16}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs text-gray-700">2x</span>
-                      </div>
-                      <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
-                        <div className="w-4 h-4 rounded-full overflow-hidden">
-                          <Image
-                            src="/Images/Logo/ethena-logo.png"
-                            alt="Ethena"
-                            width={16}
-                            height={16}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs text-gray-700">1x</span>
-                      </div>
-                    </>
-                  )}
-                  {deposit.token === "USDC" && (
-                    <>
-                      <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
-                        <div className="w-4 h-4 rounded-full overflow-hidden">
-                          <Image
-                            src="/Images/Logo/moonwell-logo.png"
-                            alt="Moonwell"
-                            width={16}
-                            height={16}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs text-gray-700">1x</span>
-                      </div>
-                      <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
-                        <div className="w-4 h-4 rounded-full overflow-hidden">
-                          <Image
-                            src="/Images/Logo/etherfi-logo.png"
-                            alt="EtherFi"
-                            width={16}
-                            height={16}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs text-gray-700">2x</span>
-                      </div>
-                      <div className="flex items-center space-x-1 bg-white rounded-full px-2 py-1">
-                        <div className="w-4 h-4 rounded-full overflow-hidden">
-                          <Image
-                            src="/Images/Logo/ethena-logo.png"
-                            alt="Ethena"
-                            width={16}
-                            height={16}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs text-gray-700">1x</span>
-                      </div>
-                    </>
-                  )}
                 </div>
               </div>
             </motion.div>
