@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useGetRecommentStrategy } from '@/hooks/useGetRecommentStrategy';
@@ -10,7 +10,10 @@ import { StrategySelector } from './_components/StrategySelector';
 import { AmountInput } from './_components/AmountInput';
 import { StrategyResults } from './_components/StrategyResults';
 
-const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
+const Lottie = dynamic(() => import('lottie-react'), { 
+  ssr: false,
+  loading: () => <div className="w-20 h-20 bg-gray-100 rounded-lg animate-pulse" />
+});
 import catAskAnimation from '../../../public/Images/Logo/cat-ask.json';
 
 export default function AI() {
@@ -22,12 +25,16 @@ export default function AI() {
   const { setGlobalLoading } = useLoading();
 
   useEffect(() => {
-    setGlobalLoading(isLoading);
+    startTransition(() => {
+      setGlobalLoading(isLoading);
+    });
     
     // Safety timeout: force stop global loading after 10 seconds
     if (isLoading) {
       const timeout = setTimeout(() => {
-        setGlobalLoading(false);
+        startTransition(() => {
+          setGlobalLoading(false);
+        });
       }, 10000);
       
       return () => clearTimeout(timeout);
