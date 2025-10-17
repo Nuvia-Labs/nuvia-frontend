@@ -16,6 +16,7 @@ import { SuccessNotification } from "@/components/SuccessNotification";
 import walletAnimation from "../../../public/Images/Logo/wallet_animation.json";
 import catLoadingAnimation from "../../../public/Images/Logo/CatLoading.json";
 import analyzeMarketAnimation from "../../../public/Images/Logo/analyze-market.json";
+import { Sparkles } from "lucide-react";
 
 interface StrategyRecommendation {
   fromProtocol: string;
@@ -538,9 +539,9 @@ export default function Earn() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.3 }}
             >
-              🤖 AI Strategy Recommendations
-              <span className="ml-2 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full animate-pulse">
-                Smart
+              AI Strategy Recommendations
+              <span className="ml-2 text-xs">
+                <Sparkles/>
               </span>
             </motion.h3>
             {strategyRecommendations.map((strategy, index) => (
