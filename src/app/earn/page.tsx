@@ -66,10 +66,12 @@ export default function Earn() {
     }
   };
 
-  // Watch for completion
+  // Watch for completion and hide navbars
   useEffect(() => {
     if (isCompleted) {
       setShowSuccessNotification(true);
+      // Hide navbars during success notification
+      document.body.classList.add('hide-navbars');
     }
   }, [isCompleted]);
 
@@ -77,6 +79,8 @@ export default function Earn() {
     setShowSuccessNotification(false);
     setSelectedStrategy(null);
     setShowAmountInput(false);
+    // Show navbars again
+    document.body.classList.remove('hide-navbars');
     reset();
   };
 
@@ -627,7 +631,7 @@ export default function Earn() {
         <SuccessNotification
           isVisible={showSuccessNotification}
           onClose={handleCloseSuccessNotification}
-          title="🎉 Strategy Executed!"
+          title="Strategy Executed!"
           message={`Successfully executed strategy with $${amount.toLocaleString()} investment. Your funds are now optimally allocated.`}
         />
 

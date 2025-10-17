@@ -47,7 +47,7 @@ export function SuccessNotification({
               </button>
 
               <div className="text-center">
-                <div className="w-24 h-24 mx-auto mb-4">
+                <div className="w-50 h-24 mx-auto mb-4">
                   <Lottie
                     animationData={successAnimation}
                     loop={false}

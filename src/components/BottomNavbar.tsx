@@ -17,6 +17,7 @@ export function BottomNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isAILoading, setIsAILoading] = useState(false);
+  const [hideNavbars, setHideNavbars] = useState(false);
 
   useEffect(() => {
     const handleAILoading = (event: CustomEvent) => {
@@ -28,6 +29,23 @@ export function BottomNavbar() {
     return () => {
       window.removeEventListener('ai-loading-state', handleAILoading as EventListener);
     };
+  }, []);
+
+  // Watch for hide-navbars class changes
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setHideNavbars(document.body.classList.contains('hide-navbars'));
+    });
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    // Initial check
+    setHideNavbars(document.body.classList.contains('hide-navbars'));
+
+    return () => observer.disconnect();
   }, []);
 
   // Memoize active index calculation
@@ -50,8 +68,8 @@ export function BottomNavbar() {
     router.push(href);
   };
 
-  // Hide navbar when AI is loading
-  if (isAILoading) {
+  // Hide navbar when AI is loading or when navbars should be hidden
+  if (isAILoading || hideNavbars) {
     return null;
   }
 

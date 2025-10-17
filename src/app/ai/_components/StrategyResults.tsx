@@ -59,11 +59,15 @@ export function StrategyResults({ data, amount }: StrategyResultsProps) {
   useEffect(() => {
     if (isCompleted) {
       setShowSuccessNotification(true);
+      // Hide navbars during success notification
+      document.body.classList.add('hide-navbars');
     }
   }, [isCompleted]);
 
   const handleCloseSuccessNotification = () => {
     setShowSuccessNotification(false);
+    // Show navbars again
+    document.body.classList.remove('hide-navbars');
     reset();
   };
 
