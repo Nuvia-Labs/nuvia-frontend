@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -84,9 +84,11 @@ export default function Earn() {
     setShowAmountInput(false);
   };
 
-  const handleTriggerAI = () => {
-    setHasTriggeredAI(true);
-  };
+  const handleTriggerAI = useCallback(() => {
+    startTransition(() => {
+      setHasTriggeredAI(true);
+    });
+  }, []);
 
   // Mock data fallback when APIs fail
   const getMockForecastData = () => [
@@ -399,58 +401,167 @@ export default function Earn() {
                 Get real-time market analysis, strategy recommendations, and insights powered by AI.
               </p>
             </div>
-            <button
+            <motion.button
               onClick={handleTriggerAI}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl mx-auto"
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl mx-auto transform-gpu"
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+              }}
+              whileTap={{ 
+                scale: 0.98,
+                transition: { duration: 0.1 }
+              }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: 0.3,
+                delay: 0.2,
+                type: "spring",
+                stiffness: 300,
+                damping: 25
+              }}
             >
               Get AI Strategies
-            </button>
+            </motion.button>
           </div>
         )}
 
         {/* Loading State */}
         {isLoading && (
-          <div className="text-center py-8">
-            <div className="w-20 h-20 flex items-center justify-center mx-auto mb-4">
+          <motion.div 
+            className="text-center py-8"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ 
+              duration: 0.3,
+              type: "spring",
+              stiffness: 300,
+              damping: 25
+            }}
+          >
+            <motion.div 
+              className="w-20 h-20 flex items-center justify-center mx-auto mb-4"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ 
+                duration: 0.5,
+                type: "spring",
+                stiffness: 400,
+                damping: 20,
+                delay: 0.1
+              }}
+            >
               <Lottie
                 animationData={catLoadingAnimation}
                 loop={true}
                 className="w-full h-full"
               />
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">
-              AI Analyzing Strategies
-            </h3>
-            <p className="text-gray-600 text-sm">
+            </motion.div>
+            <motion.h3 
+              className="text-lg font-bold text-gray-900 mb-2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+            >
+              🤖 AI Analyzing Strategies
+            </motion.h3>
+            <motion.p 
+              className="text-gray-600 text-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+            >
               Finding optimal DeFi allocations for your portfolio...
-            </p>
-          </div>
+            </motion.p>
+            
+            <motion.div 
+              className="flex justify-center space-x-1 mt-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3, delay: 0.4 }}
+            >
+              {[0, 1, 2].map((i) => (
+                <motion.div
+                  key={i}
+                  className="w-2 h-2 bg-red-500 rounded-full"
+                  animate={{ opacity: [0.3, 1, 0.3] }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    delay: i * 0.2,
+                  }}
+                />
+              ))}
+            </motion.div>
+          </motion.div>
         )}
 
         {/* DeFi Weather Board */}
         {hasTriggeredAI && effectiveYieldData?.forecasts && effectivePulseData?.protocols && (
-          <DeFiWeatherboard 
-            forecasts={effectiveYieldData.forecasts} 
-            protocols={effectivePulseData.protocols} 
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+              duration: 0.5,
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+              delay: 0.1
+            }}
+          >
+            <DeFiWeatherboard 
+              forecasts={effectiveYieldData.forecasts} 
+              protocols={effectivePulseData.protocols} 
+            />
+          </motion.div>
         )}
 
         {/* Strategy Recommendations */}
         {hasTriggeredAI && strategyRecommendations.length > 0 && !showAmountInput && (
-          <div className="space-y-3 mb-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-              AI Strategy Recommendations
-            </h3>
+          <motion.div 
+            className="space-y-3 mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+              duration: 0.5,
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+              delay: 0.2
+            }}
+          >
+            <motion.h3 
+              className="text-lg font-bold text-gray-900 mb-3 flex items-center"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+            >
+              🤖 AI Strategy Recommendations
+              <span className="ml-2 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full animate-pulse">
+                Smart
+              </span>
+            </motion.h3>
             {strategyRecommendations.map((strategy, index) => (
-              <DynamicStrategyCard
+              <motion.div
                 key={index}
-                strategy={strategy}
-                onSelect={handleStrategySelect}
-                onDeselect={() => setSelectedStrategy(null)}
-                isSelected={selectedStrategy?.toProtocol === strategy.toProtocol && selectedStrategy?.frequency === strategy.frequency}
-              />
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.3,
+                  delay: 0.4 + (index * 0.1)
+                }}
+              >
+                <DynamicStrategyCard
+                  strategy={strategy}
+                  onSelect={handleStrategySelect}
+                  onDeselect={() => setSelectedStrategy(null)}
+                  isSelected={selectedStrategy?.toProtocol === strategy.toProtocol && selectedStrategy?.frequency === strategy.frequency}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Amount Input and Execute Strategy */}
