@@ -11,7 +11,7 @@ const mockFriends = [
     name: "Alex Chen",
     username: "@alexchen",
     avatar: "/Images/Logo/nuvia-logo.png",
-    vault: "cbBTC",
+    vault: "Moonwell",
     amount: "0.025",
     apy: "8.5%",
     status: "farming",
@@ -21,7 +21,7 @@ const mockFriends = [
     name: "Sarah Kim",
     username: "@sarahk",
     avatar: "/Images/Logo/nuvia-logo.png",
-    vault: "cbETH",
+    vault: "Aave",
     amount: "1.2",
     apy: "6.7%",
     status: "farming",
@@ -31,7 +31,7 @@ const mockFriends = [
     name: "Mike Johnson",
     username: "@mikej",
     avatar: "/Images/Logo/nuvia-logo.png",
-    vault: "USDC",
+    vault: "Aerodrome",
     amount: "5,250",
     apy: "5.3%",
     status: "farming",
@@ -41,7 +41,7 @@ const mockFriends = [
     name: "Emma Davis",
     username: "@emmad",
     avatar: "/Images/Logo/nuvia-logo.png",
-    vault: "cbBTC",
+    vault: "Moonwell",
     amount: "0.15",
     apy: "8.5%",
     status: "farming",
@@ -50,12 +50,18 @@ const mockFriends = [
 
 const getVaultLogo = (vault: string) => {
   switch (vault) {
-    case "cbBTC":
-      return "/Images/Logo/cbbtc-logo.webp";
-    case "cbETH":
-      return "/Images/Logo/cbeth-logo.png";
-    case "USDC":
-      return "/Images/Logo/usdc-logo.png";
+    case "Moonwell":
+      return "/Images/Logo/moonwell-logo.png";
+    case "Aave":
+      return "/Images/Logo/aave-logo.png";
+    case "Aerodrome":
+      return "/Images/Logo/aerodrome-logo.svg";
+    case "Morpho":
+      return "/Images/Logo/morpho-logo.jpeg";
+    case "EtherFi":
+      return "/Images/Logo/etherfi-logo.png";
+    case "Ethena":
+      return "/Images/Logo/ethena-logo.png";
     default:
       return "/Images/Logo/nuvia-logo.png";
   }
