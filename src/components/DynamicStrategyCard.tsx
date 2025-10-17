@@ -138,7 +138,10 @@ export function DynamicStrategyCard({ strategy, onSelect, onDeselect, isSelected
             {/* Strategy Description */}
             <div>
               <div className={`text-base font-bold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
-                {strategy.amount} USDC → {strategy.toProtocol} {strategy.frequency}
+                Supply USDC → {strategy.toProtocol}
+              </div>
+              <div className={`text-xs ${isSelected ? 'text-red-100' : 'text-gray-500'}`}>
+                Stake/Supply to earn yield
               </div>
             </div>
           </div>
@@ -162,15 +165,15 @@ export function DynamicStrategyCard({ strategy, onSelect, onDeselect, isSelected
         {/* Strategy Details Row */}
         <div className="mt-3 grid grid-cols-2 gap-4">
           <div>
-            <div className={`text-xs ${isSelected ? 'text-red-100' : 'text-gray-500'}`}>Total Amount</div>
-            <div className={`text-lg font-bold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
-              {(strategy.amount * strategy.duration * (strategy.frequency === 'daily' ? 1 : strategy.frequency === 'weekly' ? 1/7 : 24)).toFixed(0)} USDC
+            <div className={`text-xs ${isSelected ? 'text-red-100' : 'text-gray-500'}`}>Expected APY</div>
+            <div className={`text-lg font-bold ${isSelected ? 'text-white' : 'text-green-600'}`}>
+              +{strategy.expectedGain.toFixed(2)}%
             </div>
           </div>
           <div>
-            <div className={`text-xs ${isSelected ? 'text-red-100' : 'text-gray-500'}`}>No. of days</div>
-            <div className={`text-lg font-bold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
-              {strategy.duration}
+            <div className={`text-xs ${isSelected ? 'text-red-100' : 'text-gray-500'}`}>Risk Level</div>
+            <div className={`text-sm font-bold ${isSelected ? 'text-white' : getRiskColor(strategy.riskLevel)}`}>
+              {strategy.riskLevel}
             </div>
           </div>
         </div>

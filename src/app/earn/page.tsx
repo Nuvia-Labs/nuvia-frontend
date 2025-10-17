@@ -273,9 +273,8 @@ export default function Earn() {
               AI-Powered DeFi Strategies
             </h1>
             <p className="text-red-100 text-xs leading-relaxed max-w-xs mx-auto">
-              Smart yield forecasting with real-time market pulse.
+              Smart AI Strategies with real-time market information.
               <br />
-              <span className="font-semibold">Deploy intelligent strategies in seconds.</span>
             </p>
           </div>
         </div>
@@ -374,9 +373,8 @@ export default function Earn() {
             AI-Powered DeFi Strategies
           </h1>
           <p className="text-red-100 text-sm leading-relaxed max-w-xs mx-auto">
-            Smart yield forecasting with real-time market pulse.
+            Smart AI Strategies with real-time market information.
             <br />
-            <span className="font-semibold">Deploy intelligent strategies in seconds.</span>
           </p>
         </div>
       </div>
@@ -395,17 +393,17 @@ export default function Earn() {
             </div>
             <div className="mb-4">
               <h3 className="text-lg font-bold text-gray-900 mb-2">
-                AI-Powered Yield Intelligence
+                AI-Powered Smart Strategy
               </h3>
               <p className="text-gray-600 text-xs max-w-xs mx-auto leading-relaxed">
-                Get real-time market analysis, strategy recommendations, and liquidity health insights powered by AI.
+                Get real-time market analysis, strategy recommendations, and insights powered by AI.
               </p>
             </div>
             <button
               onClick={handleTriggerAI}
               className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl mx-auto"
             >
-              Analyze Market & Get AI Strategies
+              Get AI Strategies
             </button>
           </div>
         )}
@@ -441,10 +439,7 @@ export default function Earn() {
         {hasTriggeredAI && strategyRecommendations.length > 0 && !showAmountInput && (
           <div className="space-y-3 mb-6">
             <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-              🤖 AI Strategy Recommendations
-              <span className="ml-2 text-sm bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full animate-pulse">
-                Smart
-              </span>
+              AI Strategy Recommendations
             </h3>
             {strategyRecommendations.map((strategy, index) => (
               <DynamicStrategyCard
