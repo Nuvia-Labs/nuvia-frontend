@@ -30,7 +30,7 @@ export const ExecuteStrategyPanel = ({
     <div className="mb-6">
       <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm mb-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-gray-900">💰 Execute Strategy</h3>
+          <h3 className="text-lg font-bold text-gray-900">Execute Strategy</h3>
           <button onClick={onBack} className="text-gray-500 hover:text-gray-700 text-sm">
             ← Back
           </button>
@@ -40,7 +40,6 @@ export const ExecuteStrategyPanel = ({
           <div className="text-sm font-medium text-gray-700 mb-1">Selected Strategy</div>
           <div className="text-base font-bold text-gray-900">
             {selectedStrategy.amount} {selectedStrategy.fromProtocol} → {selectedStrategy.toProtocol}{" "}
-            {selectedStrategy.frequency}
           </div>
           <div className="text-sm text-gray-600 mt-1">
             Expected Gain: +{selectedStrategy.expectedGain.toFixed(2)}% | Risk: {selectedStrategy.riskLevel}
@@ -66,9 +65,9 @@ export const ExecuteStrategyPanel = ({
         >
           {isExecuting
             ? step === "approving"
-              ? "⏳ Approving USDC..."
-              : "⏳ Executing Strategy..."
-            : `🚀 Execute Strategy with $${amount.toLocaleString()}`}
+              ? "Approving USDC..."
+              : "Executing Strategy..."
+            : `Execute Strategy with $${amount.toLocaleString()}`}
         </button>
       </div>
     </div>
