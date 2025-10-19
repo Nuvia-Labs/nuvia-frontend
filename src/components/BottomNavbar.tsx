@@ -4,7 +4,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Users, Layers, Briefcase, Zap } from 'lucide-react';
-import { useEffect } from 'react';
+import { startTransition, useCallback, useEffect, useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useNavigationStore, getIndexFromPathname } from '@/stores/navigationStore';
 
 const navItems = [
@@ -17,8 +18,7 @@ const navItems = [
 export function BottomNavbar() {
   const pathname = usePathname();
   const router = useRouter();
-  
-  // Zustand store
+
   const {
     activeIndex,
     isTransitioning,
@@ -27,7 +27,17 @@ export function BottomNavbar() {
     setActiveIndex,
     setHideNavbars,
     setAILoading,
-  } = useNavigationStore();
+  } = useNavigationStore(
+    useShallow((state) => ({
+      activeIndex: state.activeIndex,
+      isTransitioning: state.isTransitioning,
+      hideNavbars: state.hideNavbars,
+      isAILoading: state.isAILoading,
+      setActiveIndex: state.setActiveIndex,
+      setHideNavbars: state.setHideNavbars,
+      setAILoading: state.setAILoading,
+    }))
+  );
 
   // Sync pathname changes with Zustand store
   useEffect(() => {
@@ -43,11 +53,21 @@ export function BottomNavbar() {
     };
 
     window.addEventListener('ai-loading-state', handleAILoading as EventListener);
-    
+
     return () => {
       window.removeEventListener('ai-loading-state', handleAILoading as EventListener);
     };
   }, [setAILoading]);
+
+  useEffect(() => {
+    navItems.forEach((item) => {
+      try {
+        router.prefetch(item.href);
+      } catch {
+        // Ignore prefetch errors (e.g. during dev)
+      }
+    });
+  }, [router]);
 
   // Watch for hide-navbars class changes
   useEffect(() => {
@@ -67,12 +87,55 @@ export function BottomNavbar() {
   }, [setHideNavbars]);
 
   // Handle navigation with smooth transitions
-  const handleNavigation = (href: string, index: number) => {
-    // Update active index immediately for smooth visual feedback
-    setActiveIndex(index);
-    // Navigate to new route
-    router.push(href);
-  };
+  const handleNavigation = useCallback(
+    (href: string, index: number) => {
+      if (index === activeIndex && pathname === href) {
+        return;
+      }
+
+      setActiveIndex(index);
+
+      startTransition(() => {
+        router.push(href);
+      });
+    },
+    [activeIndex, pathname, router, setActiveIndex]
+  );
+
+  const navButtons = useMemo(
+    () =>
+      navItems.map((item, index) => {
+        const isActive = index === activeIndex;
+
+        return (
+          <motion.button
+            key={item.href}
+            onClick={() => handleNavigation(item.href, index)}
+            className="relative z-10"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+          >
+            <div
+              className={cn(
+                'flex items-center justify-center w-[70px] h-11 rounded-full transition-all duration-150',
+                isActive ? 'text-white' : 'text-gray-400 hover:text-gray-600'
+              )}
+            >
+              <motion.div
+                animate={{
+                  scale: isActive ? 1.08 : 1,
+                }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+              >
+                <item.icon size={20} />
+              </motion.div>
+            </div>
+          </motion.button>
+        );
+      }),
+    [activeIndex, handleNavigation]
+  );
 
   return (
     <AnimatePresence>
@@ -105,50 +168,15 @@ export function BottomNavbar() {
                   }}
                   transition={{
                     type: "spring",
-                    stiffness: 600,
-                    damping: 35,
-                    mass: 0.6,
-                    velocity: isTransitioning ? 10 : 0
+                    stiffness: 500,
+                    damping: 32,
+                    mass: 0.55,
+                    velocity: isTransitioning ? 5 : 0
                   }}
                 />
                 
-                {/* Navigation Items - Enhanced */}
-                {navItems.map((item, index) => {
-                  const isActive = index === activeIndex;
-                  
-                  return (
-                    <motion.button
-                      key={item.href}
-                      onClick={() => handleNavigation(item.href, index)}
-                      className="relative z-10"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      <div
-                        className={cn(
-                          'flex items-center justify-center w-[70px] h-11 rounded-full transition-all duration-200',
-                          isActive
-                            ? 'text-white'
-                            : 'text-gray-400 hover:text-gray-600'
-                        )}
-                      >
-                        <motion.div
-                          animate={{
-                            scale: isActive ? 1.1 : 1,
-                            rotateY: isTransitioning && isActive ? 180 : 0
-                          }}
-                          transition={{
-                            duration: 0.3,
-                            ease: "easeInOut"
-                          }}
-                        >
-                          <item.icon size={20} />
-                        </motion.div>
-                      </div>
-                    </motion.button>
-                  );
-                })}
+                {/* Navigation Items */}
+                {navButtons}
               </div>
             </div>
           </div>
