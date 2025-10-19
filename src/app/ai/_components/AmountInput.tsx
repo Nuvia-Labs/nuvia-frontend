@@ -5,9 +5,17 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useAIStore } from '../_store/useAIStore';
 
-export function AmountInput() {
-  const amount = useAIStore((state) => state.amount);
-  const setAmount = useAIStore((state) => state.setAmount);
+interface AmountInputProps {
+  amount?: number;
+  onAmountChange?: (amount: number) => void;
+}
+
+export function AmountInput({ amount, onAmountChange }: AmountInputProps = {}) {
+  const storeAmount = useAIStore((state) => state.amount);
+  const storeSetAmount = useAIStore((state) => state.setAmount);
+
+  const resolvedAmount = amount ?? storeAmount;
+  const setAmount = onAmountChange ?? storeSetAmount;
   const presetAmounts = [10, 100, 500, 1000];
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +51,7 @@ export function AmountInput() {
           </div>
           <input
             type="number"
-            value={amount === 0 ? '' : amount}
+            value={resolvedAmount === 0 ? '' : resolvedAmount}
             onChange={handleInputChange}
             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             placeholder="Enter amount"
@@ -59,7 +67,7 @@ export function AmountInput() {
             key={preset}
             onClick={() => setAmount(preset)}
             className={`py-2 px-3 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1 ${
-              amount === preset
+              resolvedAmount === preset
                 ? 'bg-red-500 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
