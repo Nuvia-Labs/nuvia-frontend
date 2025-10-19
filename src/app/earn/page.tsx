@@ -246,106 +246,14 @@ export default function Earn() {
 
   const strategyRecommendations = generateStrategyRecommendations();
 
-  if (isLoading) {
-    return (
-      <div className="w-full max-w-md mx-auto min-h-screen bg-white">
-        {/* Hero Section - Full Width Red Background */}
-        <div className="px-6 py-8 pb-12 relative overflow-hidden bg-gradient-to-br from-red-500 to-red-600">
-          {/* Background Pattern/Effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-red-400/20 to-transparent"></div>
-          <div className="absolute top-4 right-4 w-24 h-24 bg-red-400/10 rounded-full blur-2xl"></div>
-          <div className="absolute bottom-4 left-4 w-32 h-32 bg-red-300/10 rounded-full blur-3xl"></div>
-
-          {/* Content */}
-          <div className="relative z-10 text-center">
-            {/* Nuvia Logo - Larger and Centered */}
-            <div className="flex justify-center mb-4">
-              <motion.div
-                className="flex items-center justify-center"
-                initial={{ scale: 0, rotate: 0 }}
-                animate={{
-                  scale: 1,
-                  rotate: [-15, 15],
-                  x: 0,
-                }}
-                transition={{
-                  scale: {
-                    duration: 0.8,
-                    ease: "easeOut",
-                    delay: 0.2,
-                  },
-                  rotate: {
-                    duration: 3,
-                    ease: "easeInOut",
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    delay: 1,
-                  },
-                }}
-                whileHover={{
-                  scale: 1.1,
-                  transition: { duration: 0.3 },
-                }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Image
-                  src="/Images/Logo/nuvia-logo.png"
-                  alt="Nuvia Logo"
-                  width={100}
-                  height={40}
-                  className="object-contain rounded-full"
-                />
-              </motion.div>
-            </div>
-
-            {/* Title and Description */}
-            <h1 className="text-xl font-bold text-white mb-2">
-              AI-Powered DeFi Strategies
-            </h1>
-            <p className="text-red-100 text-xs leading-relaxed max-w-xs mx-auto">
-              Smart AI Strategies with real-time market information.
-              <br />
-            </p>
-          </div>
-        </div>
-
-        {/* Content Area - Full White Background for Loading */}
-        <div className="bg-white rounded-t-3xl px-4 pt-6 pb-28 -mt-6 relative z-10 flex-1">
-          {/* Loading State */}
-          <div className="text-center py-4 flex flex-col justify-center items-center h-full">
-            <div className="w-20 h-20 flex items-center justify-center mx-auto mb-4">
-              <Lottie
-                animationData={catLoadingAnimation}
-                loop={true}
-                className="w-full h-full"
-              />
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">
-              AI Analyzing Strategies
-            </h3>
-            <p className="text-gray-600 text-sm max-w-sm mx-auto mb-4">
-              Finding optimal DeFi allocations for your portfolio...
-            </p>
-
-            <div className="flex justify-center space-x-1">
-              {[0, 1, 2].map((i) => (
-                <motion.div
-                  key={i}
-                  className="w-2 h-2 bg-red-500 rounded-full"
-                  animate={{ opacity: [0.3, 1, 0.3] }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    delay: i * 0.2,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Handle loading with minimalist overlay
+  useEffect(() => {
+    if (isLoading) {
+      document.body.classList.add('hide-navbars');
+    } else {
+      document.body.classList.remove('hide-navbars');
+    }
+  }, [isLoading]);
 
   return (
     <div className="w-full max-w-md mx-auto h-screen bg-gradient-to-br from-red-500 to-red-600 flex flex-col">
@@ -663,6 +571,87 @@ export default function Earn() {
           </div>
         )}
       </div>
+
+      {/* Minimalist Loading Overlay */}
+      {isLoading && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.1)'
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            className="text-center"
+          >
+            <motion.div
+              className="w-28 h-28 flex items-center justify-center mx-auto mb-6"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{
+                duration: 0.6,
+                type: "spring",
+                stiffness: 400,
+                damping: 20,
+                delay: 0.2,
+              }}
+            >
+              <Lottie
+                animationData={catLoadingAnimation}
+                loop={true}
+                className="w-full h-full"
+              />
+            </motion.div>
+            
+            <motion.h3
+              className="text-xl font-bold text-black mb-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+            >
+              AI Analyzing Strategies
+            </motion.h3>
+            
+            <motion.p
+              className="text-gray-700 text-sm mb-6 leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+            >
+              Finding optimal DeFi allocations for your portfolio...
+            </motion.p>
+
+            <motion.div
+              className="flex justify-center space-x-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
+            >
+              {[0, 1, 2].map((i) => (
+                <motion.div
+                  key={i}
+                  className="w-3 h-3 bg-black rounded-full"
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    opacity: [0.6, 1, 0.6] 
+                  }}
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    delay: i * 0.2,
+                    ease: "easeInOut"
+                  }}
+                />
+              ))}
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }

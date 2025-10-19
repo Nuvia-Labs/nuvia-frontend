@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect, startTransition } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useGetRecommentStrategy } from '@/hooks/useGetRecommentStrategy';
-import { useLoading } from '@/contexts/LoadingContext';
 import { HeroSection } from './_components/HeroSection';
 import { StrategySelector } from './_components/StrategySelector';
 import { AmountInput } from './_components/AmountInput';
@@ -23,32 +22,15 @@ export default function AI() {
   const [hasSearched, setHasSearched] = useState(false);
   
   const { data, isLoading, error, fetchRecommendedStrategy } = useGetRecommentStrategy();
-  const { setGlobalLoading } = useLoading();
 
   useEffect(() => {
-    startTransition(() => {
-      setGlobalLoading(isLoading);
-    });
-    
     // Hide/show navbars during loading
     if (isLoading) {
       document.body.classList.add('hide-navbars');
     } else {
       document.body.classList.remove('hide-navbars');
     }
-    
-    // Safety timeout: force stop global loading after 10 seconds
-    if (isLoading) {
-      const timeout = setTimeout(() => {
-        startTransition(() => {
-          setGlobalLoading(false);
-        });
-        document.body.classList.remove('hide-navbars');
-      }, 10000);
-      
-      return () => clearTimeout(timeout);
-    }
-  }, [isLoading, setGlobalLoading]);
+  }, [isLoading]);
 
   useEffect(() => {
     if (hasSearched && !isLoading && data) {
@@ -62,18 +44,6 @@ export default function AI() {
     }
   }, [hasSearched, isLoading, data]);
 
-  // Force stop global loading on unmount or error
-  useEffect(() => {
-    return () => {
-      setGlobalLoading(false);
-    };
-  }, [setGlobalLoading]);
-
-  useEffect(() => {
-    if (error) {
-      setGlobalLoading(false);
-    }
-  }, [error, setGlobalLoading]);
 
   const handleStrategySelect = (strategy: string) => {
     setSelectedStrategy(strategy);
@@ -142,15 +112,11 @@ export default function AI() {
             <motion.button
               onClick={handleGetRecommendation}
               disabled={isLoading}
-              className="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-medium flex items-center justify-center space-x-2 disabled:opacity-50"
+              className="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-medium flex items-center justify-center space-x-2"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {isLoading ? (
-                <span>AI is analyzing strategies...</span>
-              ) : (
-                <span>Get AI Strategy Recommendation</span>
-              )}
+              <span>Get AI Strategy Recommendation</span>
             </motion.button>
           </motion.div>
         )}
