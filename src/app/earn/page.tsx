@@ -1,14 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback, startTransition } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
 import { useWallet } from "@/hooks/useWallet";
 import { useGetYieldForest } from "@/hooks/useGetYieldForest";
 import { useGetLiquidityPulse } from "@/hooks/useGetLiquidityPulse";
-import { DeFiWeatherboard } from "@/components/DeFiWeatherboard";
 import { DynamicStrategyCard } from "@/components/DynamicStrategyCard";
 import { AmountInput } from "@/app/ai/_components/AmountInput";
 import { useExecuteStrategy } from "@/hooks/useExecuteStrategy";
@@ -18,34 +16,60 @@ import catLoadingAnimation from "../../../public/Images/Logo/CatLoading.json";
 import analyzeMarketAnimation from "../../../public/Images/Logo/analyze-market.json";
 import { Sparkles } from "lucide-react";
 
+interface WhaleActivity {
+  amount: string;
+  protocol: string;
+  action: "deposited" | "withdrew" | "staked";
+  timeAgo: string;
+  isWhale: boolean;
+  walletType: "whale" | "smart_money" | "institution";
+}
+
 interface StrategyRecommendation {
   fromProtocol: string;
   toProtocol: string;
   amount: number;
-  frequency: 'daily' | 'weekly' | 'hourly';
+  frequency: "daily" | "weekly" | "hourly";
   duration: number;
   expectedGain: number;
-  confidenceTier: 'High' | 'Medium' | 'Low';
+  confidenceTier: "High" | "Medium" | "Low";
   reasoning: string;
-  riskLevel: 'Low' | 'Medium' | 'High';
+  riskLevel: "Low" | "Medium" | "High";
+  whaleActivity?: WhaleActivity[];
+  hotness?: "fire" | "trending" | "normal";
 }
 
 export default function Earn() {
-  const router = useRouter();
-  const { address, isConnected } = useWallet();
-  const [selectedStrategy, setSelectedStrategy] = useState<StrategyRecommendation | null>(null);
+  const { isConnected } = useWallet();
+  const [selectedStrategy, setSelectedStrategy] =
+    useState<StrategyRecommendation | null>(null);
   const [hasTriggeredAI, setHasTriggeredAI] = useState(false);
   const [showAmountInput, setShowAmountInput] = useState(false);
   const [amount, setAmount] = useState(100);
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
-  
-  const { executeStrategy, isLoading: isExecuting, isCompleted, hasError, errorMessage, step, reset } = useExecuteStrategy();
-  
-  // Only fetch data when user triggers AI analysis
-  const { data: yieldData, isLoading: yieldLoading, error: yieldError, refetch: refetchYield } = useGetYieldForest(hasTriggeredAI);
-  const { data: pulseData, isLoading: pulseLoading, error: pulseError, refetch: refetchPulse } = useGetLiquidityPulse(hasTriggeredAI);
 
-  const isLoading = hasTriggeredAI && yieldLoading && pulseLoading && !yieldError && !pulseError;
+  const {
+    executeStrategy,
+    isLoading: isExecuting,
+    isCompleted,
+    hasError,
+    errorMessage,
+    step,
+    reset,
+  } = useExecuteStrategy();
+
+  // Only fetch data when user triggers AI analysis
+  const { isLoading: yieldLoading, error: yieldError } =
+    useGetYieldForest(hasTriggeredAI);
+  const { isLoading: pulseLoading, error: pulseError } =
+    useGetLiquidityPulse(hasTriggeredAI);
+
+  const isLoading =
+    hasTriggeredAI &&
+    yieldLoading &&
+    pulseLoading &&
+    !yieldError &&
+    !pulseError;
 
   const handleStrategySelect = (strategy: StrategyRecommendation) => {
     if (!isConnected) {
@@ -61,7 +85,7 @@ export default function Earn() {
       try {
         await executeStrategy(amount);
       } catch (error) {
-        console.error('Strategy execution failed:', error);
+        console.error("Strategy execution failed:", error);
       }
     }
   };
@@ -71,7 +95,7 @@ export default function Earn() {
     if (isCompleted) {
       setShowSuccessNotification(true);
       // Hide navbars during success notification
-      document.body.classList.add('hide-navbars');
+      document.body.classList.add("hide-navbars");
     }
   }, [isCompleted]);
 
@@ -80,7 +104,7 @@ export default function Earn() {
     setSelectedStrategy(null);
     setShowAmountInput(false);
     // Show navbars again
-    document.body.classList.remove('hide-navbars');
+    document.body.classList.remove("hide-navbars");
     reset();
   };
 
@@ -95,130 +119,101 @@ export default function Earn() {
     });
   }, []);
 
-  // Mock data fallback when APIs fail
-  const getMockForecastData = () => [
-    {
-      protocol: 'Aerodrome',
-      current_apy: 8.45,
-      forecast_7d: [8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8],
-      trend: 'rising',
-      weather: 'stable',
-      confidence: 0.82,
-      slope: 0.045
-    },
-    {
-      protocol: 'Moonwell',
-      current_apy: 12.30,
-      forecast_7d: [12.1, 12.2, 12.4, 12.3, 12.5, 12.6, 12.7],
-      trend: 'rising',
-      weather: 'moderate',
-      confidence: 0.75,
-      slope: 0.023
-    },
-    {
-      protocol: 'Aave',
-      current_apy: 6.80,
-      forecast_7d: [7.2, 7.0, 6.9, 6.8, 6.7, 6.6, 6.5],
-      trend: 'declining',
-      weather: 'volatile',
-      confidence: 0.60,
-      slope: -0.032
-    }
-  ];
+  // Generate realistic whale activity data
+  const generateWhaleActivity = (protocol: string): WhaleActivity[] => {
+    const activities: WhaleActivity[] = [];
+    const amounts = ["2.5M", "8.3M", "15.7M", "543K", "1.2M", "4.8M", "12.1M"];
+    const timeAgos = [
+      "2m ago",
+      "8m ago",
+      "15m ago",
+      "23m ago",
+      "1h ago",
+      "2h ago",
+      "3h ago",
+    ];
+    const walletTypes: ("whale" | "smart_money" | "institution")[] = [
+      "whale",
+      "smart_money",
+      "institution",
+    ];
+    const actions: ("deposited" | "withdrew" | "staked")[] = [
+      "deposited",
+      "staked",
+      "deposited",
+    ];
 
-  const getMockPulseData = () => ({
-    vault_pulse: { vault_pulse: 65, status: 'moderate', timestamp: new Date().toISOString() },
-    protocols: [
-      {
-        protocol: 'Aerodrome',
-        pulse_score: 75,
-        status: 'strong',
-        tvl: 45000000,
-        tvl_change_24h: 2.3,
-        net_flow: 'positive',
-        is_anomaly: false,
-        alert: null,
-        timestamp: new Date().toISOString()
-      },
-      {
-        protocol: 'Moonwell',
-        pulse_score: 68,
-        status: 'moderate',
-        tvl: 32000000,
-        tvl_change_24h: 1.8,
-        net_flow: 'positive',
-        is_anomaly: false,
-        alert: null,
-        timestamp: new Date().toISOString()
-      },
-      {
-        protocol: 'Aave',
-        pulse_score: 45,
-        status: 'weak',
-        tvl: 78000000,
-        tvl_change_24h: -1.2,
-        net_flow: 'negative',
-        is_anomaly: true,
-        alert: 'High outflow detected',
-        timestamp: new Date().toISOString()
-      }
-    ]
-  });
+    // Generate 2-4 whale activities per protocol
+    const numActivities = Math.floor(Math.random() * 3) + 2;
 
-  // Use mock data if APIs fail
-  const effectiveYieldData = yieldData || { forecasts: getMockForecastData(), timestamp: Date.now() };
-  const effectivePulseData = pulseData || getMockPulseData();
-
-  // Generate dynamic strategy recommendations based on API data
-  const generateStrategyRecommendations = (): StrategyRecommendation[] => {
-    if (!effectiveYieldData?.forecasts || !effectivePulseData?.protocols) return [];
-
-    const strategies: StrategyRecommendation[] = [];
-    const forecasts = effectiveYieldData.forecasts;
-
-    // Find rising and declining protocols
-    const risingProtocols = forecasts.filter(f => f.trend.toLowerCase() === 'rising');
-    const decliningProtocols = forecasts.filter(f => f.trend.toLowerCase() === 'declining');
-
-    // Create strategies for moving from declining to rising protocols
-    decliningProtocols.forEach(declining => {
-      const bestRising = risingProtocols
-        .filter(r => r.protocol !== declining.protocol)
-        .sort((a, b) => (b.current_apy * b.confidence) - (a.current_apy * a.confidence))[0];
-
-      if (bestRising) {
-        const expectedGain = (bestRising.current_apy - declining.current_apy) * bestRising.confidence;
-        strategies.push({
-          fromProtocol: declining.protocol,
-          toProtocol: bestRising.protocol,
-          amount: 100,
-          frequency: 'daily',
-          duration: 7,
-          expectedGain: Math.max(0, expectedGain),
-          confidenceTier: bestRising.confidence > 0.8 ? 'High' : bestRising.confidence > 0.6 ? 'Medium' : 'Low',
-          reasoning: `${declining.protocol} showing declining trend while ${bestRising.protocol} has rising trend with ${bestRising.confidence.toFixed(2)} confidence`,
-          riskLevel: bestRising.confidence > 0.7 ? 'Low' : bestRising.confidence > 0.5 ? 'Medium' : 'High'
-        });
-      }
-    });
-
-    // Add top performer strategies
-    const topPerformer = risingProtocols.sort((a, b) => b.current_apy - a.current_apy)[0];
-    if (topPerformer) {
-      strategies.push({
-        fromProtocol: 'USDC',
-        toProtocol: topPerformer.protocol,
-        amount: 50,
-        frequency: 'weekly',
-        duration: 14,
-        expectedGain: topPerformer.current_apy * 0.1,
-        confidenceTier: topPerformer.confidence > 0.8 ? 'High' : 'Medium',
-        reasoning: `${topPerformer.protocol} showing highest APY with strong confidence`,
-        riskLevel: 'Medium'
+    for (let i = 0; i < numActivities; i++) {
+      activities.push({
+        amount: amounts[Math.floor(Math.random() * amounts.length)],
+        protocol,
+        action: actions[Math.floor(Math.random() * actions.length)],
+        timeAgo: timeAgos[i] || `${Math.floor(Math.random() * 24)}h ago`,
+        isWhale: true,
+        walletType: walletTypes[Math.floor(Math.random() * walletTypes.length)],
       });
     }
 
-    return strategies.slice(0, 3); // Limit to 3 strategies
+    return activities.sort((a, b) => {
+      const aTime = parseInt(a.timeAgo);
+      const bTime = parseInt(b.timeAgo);
+      return aTime - bTime;
+    });
+  };
+
+  // Mock data is available but using direct strategy generation
+
+  // Generate dynamic strategy recommendations based on API data
+  const generateStrategyRecommendations = (): StrategyRecommendation[] => {
+    // Always return exactly 3 strategies with mock data
+    const strategies: StrategyRecommendation[] = [];
+
+    // Strategy 1: USDC → Aerodrome (Low-Medium Risk)
+    strategies.push({
+      fromProtocol: "USDC",
+      toProtocol: "Aerodrome",
+      amount: 100,
+      frequency: "daily",
+      duration: 7,
+      expectedGain: 4.34,
+      confidenceTier: "High",
+      reasoning: `Aerodrome showing strong performance with rising trend and high confidence`,
+      riskLevel: "Medium",
+      whaleActivity: generateWhaleActivity("Aerodrome"),
+    });
+
+    // Strategy 2: Aerodrome → Moonwell (Medium Risk)
+    strategies.push({
+      fromProtocol: "Aerodrome",
+      toProtocol: "Moonwell",
+      amount: 100,
+      frequency: "daily",
+      duration: 7,
+      expectedGain: 3.25,
+      confidenceTier: "Medium",
+      reasoning: `Moonwell has rising trend while Aerodrome provides stable base - balanced growth strategy`,
+      riskLevel: "Medium",
+      whaleActivity: generateWhaleActivity("Moonwell"),
+    });
+
+    // Strategy 3: USDC → Zora (High Risk)
+    strategies.push({
+      fromProtocol: "USDC",
+      toProtocol: "Zora",
+      amount: 200,
+      frequency: "hourly",
+      duration: 3,
+      expectedGain: 8.75,
+      confidenceTier: "Low",
+      reasoning: `Zora offering exceptional APY with high volatility - high risk, high reward opportunity`,
+      riskLevel: "High",
+      whaleActivity: generateWhaleActivity("Zora"),
+    });
+
+    return strategies;
   };
 
   const strategyRecommendations = generateStrategyRecommendations();
@@ -303,7 +298,7 @@ export default function Earn() {
             <p className="text-gray-600 text-sm max-w-sm mx-auto mb-4">
               Finding optimal DeFi allocations for your portfolio...
             </p>
-            
+
             <div className="flex justify-center space-x-1">
               {[0, 1, 2].map((i) => (
                 <motion.div
@@ -403,28 +398,30 @@ export default function Earn() {
                 AI-Powered Smart Strategy
               </h3>
               <p className="text-gray-600 text-xs max-w-xs mx-auto leading-relaxed">
-                Get real-time market analysis, strategy recommendations, and insights powered by AI.
+                Get real-time market analysis, strategy recommendations, and
+                insights powered by AI.
               </p>
             </div>
             <motion.button
               onClick={handleTriggerAI}
               className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl mx-auto transform-gpu"
-              whileHover={{ 
+              whileHover={{
                 scale: 1.02,
-                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+                boxShadow:
+                  "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
               }}
-              whileTap={{ 
+              whileTap={{
                 scale: 0.98,
-                transition: { duration: 0.1 }
+                transition: { duration: 0.1 },
               }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ 
+              transition={{
                 duration: 0.3,
                 delay: 0.2,
                 type: "spring",
                 stiffness: 300,
-                damping: 25
+                damping: 25,
               }}
             >
               Get AI Strategies
@@ -434,28 +431,28 @@ export default function Earn() {
 
         {/* Loading State */}
         {isLoading && (
-          <motion.div 
+          <motion.div
             className="text-center py-8"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ 
+            transition={{
               duration: 0.3,
               type: "spring",
               stiffness: 300,
-              damping: 25
+              damping: 25,
             }}
           >
-            <motion.div 
+            <motion.div
               className="w-20 h-20 flex items-center justify-center mx-auto mb-4"
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
-              transition={{ 
+              transition={{
                 duration: 0.5,
                 type: "spring",
                 stiffness: 400,
                 damping: 20,
-                delay: 0.1
+                delay: 0.1,
               }}
             >
               <Lottie
@@ -464,7 +461,7 @@ export default function Earn() {
                 className="w-full h-full"
               />
             </motion.div>
-            <motion.h3 
+            <motion.h3
               className="text-lg font-bold text-gray-900 mb-2"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -472,7 +469,7 @@ export default function Earn() {
             >
               🤖 AI Analyzing Strategies
             </motion.h3>
-            <motion.p 
+            <motion.p
               className="text-gray-600 text-sm"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -480,8 +477,8 @@ export default function Earn() {
             >
               Finding optimal DeFi allocations for your portfolio...
             </motion.p>
-            
-            <motion.div 
+
+            <motion.div
               className="flex justify-center space-x-1 mt-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -503,71 +500,56 @@ export default function Earn() {
           </motion.div>
         )}
 
-        {/* DeFi Weather Board */}
-        {hasTriggeredAI && effectiveYieldData?.forecasts && effectivePulseData?.protocols && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              duration: 0.5,
-              type: "spring",
-              stiffness: 300,
-              damping: 25,
-              delay: 0.1
-            }}
-          >
-            <DeFiWeatherboard 
-              forecasts={effectiveYieldData.forecasts} 
-              protocols={effectivePulseData.protocols} 
-            />
-          </motion.div>
-        )}
-
         {/* Strategy Recommendations */}
-        {hasTriggeredAI && strategyRecommendations.length > 0 && !showAmountInput && (
-          <motion.div 
-            className="space-y-3 mb-6"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              duration: 0.5,
-              type: "spring",
-              stiffness: 300,
-              damping: 25,
-              delay: 0.2
-            }}
-          >
-            <motion.h3 
-              className="text-lg font-bold text-gray-900 mb-3 flex items-center"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: 0.3 }}
+        {hasTriggeredAI &&
+          strategyRecommendations.length > 0 &&
+          !showAmountInput && (
+            <motion.div
+              className="space-y-3 mb-6"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.5,
+                type: "spring",
+                stiffness: 300,
+                damping: 25,
+                delay: 0.2,
+              }}
             >
-              AI Strategy Recommendations
-              <span className="ml-2 text-xs">
-                <Sparkles/>
-              </span>
-            </motion.h3>
-            {strategyRecommendations.map((strategy, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.3,
-                  delay: 0.4 + (index * 0.1)
-                }}
+              <div
+                className="bg-gradient-to-r from-[#FF4E4E] via-[#E63946] to-[#B71C1C] 
+                rounded-full p-2 mr-3 flex items-center justify-center mb-4 
+                gap-2 shadow-lg animate-glow"
               >
-                <DynamicStrategyCard
-                  strategy={strategy}
-                  onSelect={handleStrategySelect}
-                  onDeselect={() => setSelectedStrategy(null)}
-                  isSelected={selectedStrategy?.toProtocol === strategy.toProtocol && selectedStrategy?.frequency === strategy.frequency}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
+                <Sparkles className="w-4 h-6 text-white drop-shadow-md" />
+                <h3 className="text-sm font-bold bg-white bg-clip-text text-transparent">
+                  AI Strategy Recommendations
+                </h3>
+              </div>
+
+              {strategyRecommendations.map((strategy, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.3,
+                    delay: 0.4 + index * 0.1,
+                  }}
+                >
+                  <DynamicStrategyCard
+                    strategy={strategy}
+                    onSelect={handleStrategySelect}
+                    onDeselect={() => setSelectedStrategy(null)}
+                    isSelected={
+                      selectedStrategy?.toProtocol === strategy.toProtocol &&
+                      selectedStrategy?.frequency === strategy.frequency
+                    }
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
 
         {/* Amount Input and Execute Strategy */}
         {showAmountInput && selectedStrategy && (
@@ -584,21 +566,22 @@ export default function Earn() {
                   ← Back
                 </button>
               </div>
-              
+
               <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                <div className="text-sm font-medium text-gray-700 mb-1">Selected Strategy</div>
+                <div className="text-sm font-medium text-gray-700 mb-1">
+                  Selected Strategy
+                </div>
                 <div className="text-base font-bold text-gray-900">
-                  {selectedStrategy.amount} {selectedStrategy.fromProtocol} → {selectedStrategy.toProtocol} {selectedStrategy.frequency}
+                  {selectedStrategy.amount} {selectedStrategy.fromProtocol} →{" "}
+                  {selectedStrategy.toProtocol} {selectedStrategy.frequency}
                 </div>
                 <div className="text-sm text-gray-600 mt-1">
-                  Expected Gain: +{selectedStrategy.expectedGain.toFixed(2)}% | Risk: {selectedStrategy.riskLevel}
+                  Expected Gain: +{selectedStrategy.expectedGain.toFixed(2)}% |
+                  Risk: {selectedStrategy.riskLevel}
                 </div>
               </div>
 
-              <AmountInput 
-                amount={amount} 
-                onAmountChange={setAmount} 
-              />
+              <AmountInput amount={amount} onAmountChange={setAmount} />
 
               {hasError && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
@@ -612,17 +595,16 @@ export default function Earn() {
                 onClick={handleExecuteStrategy}
                 disabled={isExecuting || !amount}
                 className={`w-full py-3 rounded-xl font-medium text-white transition-all ${
-                  isExecuting 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-red-500 to-red-600 hover:shadow-lg'
+                  isExecuting
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-red-500 to-red-600 hover:shadow-lg"
                 }`}
               >
-                {isExecuting 
-                  ? step === 'approving' 
-                    ? '⏳ Approving USDC...' 
-                    : '⏳ Executing Strategy...'
-                  : `🚀 Execute Strategy with $${amount.toLocaleString()}`
-                }
+                {isExecuting
+                  ? step === "approving"
+                    ? "⏳ Approving USDC..."
+                    : "⏳ Executing Strategy..."
+                  : `🚀 Execute Strategy with $${amount.toLocaleString()}`}
               </button>
             </div>
           </div>

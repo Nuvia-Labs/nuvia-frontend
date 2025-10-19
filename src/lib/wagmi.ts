@@ -1,16 +1,10 @@
-import { getDefaultConfig } from '@rainbow-me/rainbowkit'
-import { metaMaskWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets'
+import { createConfig } from '@privy-io/wagmi'
 import { baseSepolia } from 'wagmi/chains'
+import { http } from 'viem'
 
-export const config = getDefaultConfig({
-  appName: 'Nuvia',
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
+export const config = createConfig({
   chains: [baseSepolia],
-  wallets: [
-    {
-      groupName: 'Recommended',
-      wallets: [metaMaskWallet, walletConnectWallet],
-    },
-  ],
-  ssr: true,
+  transports: {
+    [baseSepolia.id]: http(),
+  },
 })

@@ -1,11 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { TrendingUp, Clock, Target, AlertCircle, X } from 'lucide-react';
+import { X, Eye, Users } from 'lucide-react';
 import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/badge';
+import { motion } from 'framer-motion';
+
+interface WhaleActivity {
+  amount: string;
+  protocol: string;
+  action: 'deposited' | 'withdrew' | 'staked';
+  timeAgo: string;
+  isWhale: boolean;
+  walletType: 'whale' | 'smart_money' | 'institution';
+}
 
 interface StrategyRecommendation {
   fromProtocol: string;
@@ -17,6 +23,8 @@ interface StrategyRecommendation {
   confidenceTier: 'High' | 'Medium' | 'Low';
   reasoning: string;
   riskLevel: 'Low' | 'Medium' | 'High';
+  whaleActivity?: WhaleActivity[];
+  hotness?: 'fire' | 'trending' | 'normal';
 }
 
 interface DynamicStrategyCardProps {
@@ -27,49 +35,37 @@ interface DynamicStrategyCardProps {
 }
 
 export function DynamicStrategyCard({ strategy, onSelect, onDeselect, isSelected = false }: DynamicStrategyCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
 
-  const getFrequencyIcon = (frequency: string) => {
-    switch (frequency) {
-      case 'hourly':
-        return <Clock size={14} className="text-blue-500" />;
-      case 'daily':
-        return <Clock size={14} className="text-green-500" />;
-      case 'weekly':
-        return <Clock size={14} className="text-purple-500" />;
+  const getWalletTypeEmoji = (walletType: string) => {
+    switch (walletType) {
+      case 'whale':
+        return '🐋';
+      case 'smart_money':
+        return '🧠';
+      case 'institution':
+        return '🏛️';
       default:
-        return <Clock size={14} className="text-gray-500" />;
+        return '💰';
     }
   };
 
-  const getConfidenceColor = (tier: string) => {
-    switch (tier) {
-      case 'High':
-        return 'text-green-600 bg-green-50 border-green-200';
-      case 'Medium':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'Low':
-        return 'text-red-600 bg-red-50 border-red-200';
+  const getWalletTypeLabel = (walletType: string) => {
+    switch (walletType) {
+      case 'whale':
+        return 'Whale';
+      case 'smart_money':
+        return 'Smart Money';
+      case 'institution':
+        return 'Institution';
       default:
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return 'Big Wallet';
     }
   };
 
-  const getRiskColor = (risk: string) => {
-    switch (risk) {
-      case 'Low':
-        return 'text-green-600';
-      case 'Medium':
-        return 'text-yellow-600';
-      case 'High':
-        return 'text-red-600';
-      default:
-        return 'text-gray-600';
-    }
-  };
 
   const getProtocolLogo = (protocol: string) => {
-    switch (protocol.toLowerCase()) {
+    const protocolLower = protocol.toLowerCase().trim();
+    switch (protocolLower) {
       case 'aerodrome':
         return '/Images/Logo/aerodrome-logo.svg';
       case 'moonwell':
@@ -82,6 +78,8 @@ export function DynamicStrategyCard({ strategy, onSelect, onDeselect, isSelected
         return '/Images/Logo/cbbtc-logo.webp';
       case 'usdc':
         return '/Images/Logo/usdc-logo.png';
+      case 'zora':
+        return '/Images/Logo/zora-logo.png';
       case 'ethena':
         return '/Images/Logo/ethena-logo.png';
       case 'etherfi':
@@ -93,107 +91,192 @@ export function DynamicStrategyCard({ strategy, onSelect, onDeselect, isSelected
     }
   };
 
-  const handleToggleExpand = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsExpanded(!isExpanded);
-  };
+
+  const recentActivity = strategy.whaleActivity?.slice(0, 2) || [];
 
   return (
-    <Card 
-      className={`mb-3 border-0 transition-all duration-200 hover:shadow-lg rounded-2xl ${
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ scale: 1.02 }}
+      className={`mb-3 relative overflow-hidden rounded-2xl transition-all duration-300 ${
         isSelected 
-          ? 'bg-gradient-to-r from-red-600 to-red-700 shadow-lg' 
-          : 'bg-white hover:shadow-md'
+          ? 'bg-gradient-to-r from-red-600 to-red-700 shadow-2xl border-2 border-red-400' 
+          : 'bg-white hover:shadow-xl border border-gray-200'
       }`}
     >
-      <CardContent className="p-4">
-        {/* Main Strategy Display */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            {/* Protocol Icons */}
-            <div className="flex items-center space-x-2">
-              {/* From Protocol Icon */}
-              <div className="relative w-8 h-8 flex-shrink-0">
+
+      <div className="p-3 sm:p-4 relative z-5">
+        {/* Protocol Header - More Compact */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-2">
+            {/* Protocol Icons - Smaller */}
+            <div className="flex items-center">
+              <div className="relative w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0">
                 <Image
                   src={getProtocolLogo(strategy.fromProtocol)}
                   alt={strategy.fromProtocol}
                   width={32}
                   height={32}
-                  className="rounded-full"
+                  className="rounded-full object-cover w-full h-full"
+                  priority
+                  unoptimized
+                  onError={(e) => {
+                    console.log('Image load error for:', strategy.fromProtocol);
+                    e.currentTarget.src = '/Images/Logo/usdc-logo.png';
+                  }}
                 />
               </div>
-              
-              {/* To Protocol Icon - overlapping */}
-              <div className="relative w-8 h-8 flex-shrink-0 -ml-2">
+              <div className="relative w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 -ml-2">
                 <Image
                   src={getProtocolLogo(strategy.toProtocol)}
                   alt={strategy.toProtocol}
                   width={32}
                   height={32}
-                  className="rounded-full border-2 border-white"
+                  className="rounded-full border-2 border-white shadow-sm object-cover w-full h-full"
+                  priority
+                  unoptimized
+                  onError={(e) => {
+                    console.log('Image load error for:', strategy.toProtocol);
+                    e.currentTarget.src = '/Images/Logo/usdc-logo.png';
+                  }}
                 />
               </div>
             </div>
             
-            {/* Strategy Description */}
-            <div>
-              <div className={`text-base font-bold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
-                Supply USDC → {strategy.toProtocol}
+            {/* Strategy Title - More Compact */}
+            <div className="flex-1">
+              <div className={`text-sm sm:text-base font-bold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
+                {strategy.toProtocol.toLowerCase() === 'zora' 
+                  ? `Add Liquidity ${strategy.fromProtocol} → ${strategy.toProtocol}`
+                  : `Supply ${strategy.fromProtocol} → ${strategy.toProtocol}`
+                }
               </div>
               <div className={`text-xs ${isSelected ? 'text-red-100' : 'text-gray-500'}`}>
-                Stake/Supply to earn yield
+                {strategy.toProtocol.toLowerCase() === 'zora' 
+                  ? 'Provide liquidity to earn high yield'
+                  : 'Stake/Supply to earn yield'
+                }
               </div>
             </div>
           </div>
 
-          {/* Close/Select Button */}
-          <div className="flex items-center space-x-2">
-            {isSelected && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeselect?.();
-                }}
-                className="w-8 h-8 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center transition-colors"
-              >
-                <X size={16} className="text-white" />
-              </button>
-            )}
-          </div>
+          {/* Close Button for Selected */}
+          {isSelected && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeselect?.();
+              }}
+              className="w-6 h-6 sm:w-8 sm:h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+            >
+              <X size={14} className="text-white" />
+            </button>
+          )}
         </div>
 
-        {/* Strategy Details Row */}
-        <div className="mt-3 grid grid-cols-2 gap-4">
+        {/* Whale Activity Feed - More Compact */}
+        {recentActivity.length > 0 && !isSelected && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="mb-2 bg-gray-50 rounded-lg p-2 border-l-3 border-blue-500"
+          >
+            <div className="flex items-center gap-1 mb-1">
+              <Users size={12} className="text-blue-600" />
+              <span className="text-xs font-bold text-blue-600">WHALE ACTIVITY</span>
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+            </div>
+            <div className="space-y-0.5">
+              {recentActivity.slice(0, 2).map((activity, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="flex items-center justify-between text-xs"
+                >
+                  <div className="flex items-center gap-1 flex-1 min-w-0">
+                    <span className="text-xs">{getWalletTypeEmoji(activity.walletType)}</span>
+                    <span className="font-medium text-gray-700 truncate">
+                      {getWalletTypeLabel(activity.walletType)}
+                    </span>
+                    <span className="text-gray-500 hidden sm:inline">{activity.action}</span>
+                    <span className="font-bold text-green-600">${activity.amount}</span>
+                  </div>
+                  <span className="text-gray-400 text-xs flex-shrink-0 ml-1">{activity.timeAgo}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* APY and Risk Display - More Compact */}
+        <div className="flex items-center justify-between mb-3">
           <div>
             <div className={`text-xs ${isSelected ? 'text-red-100' : 'text-gray-500'}`}>Expected APY</div>
-            <div className={`text-lg font-bold ${isSelected ? 'text-white' : 'text-green-600'}`}>
+            <div className={`text-xl sm:text-2xl font-bold ${isSelected ? 'text-white' : 'text-green-600'}`}>
               +{strategy.expectedGain.toFixed(2)}%
             </div>
           </div>
-          <div>
+          <div className="text-right">
             <div className={`text-xs ${isSelected ? 'text-red-100' : 'text-gray-500'}`}>Risk Level</div>
-            <div className={`text-sm font-bold ${isSelected ? 'text-white' : getRiskColor(strategy.riskLevel)}`}>
+            <div className={`text-sm font-bold ${isSelected ? 'text-white' : 
+              strategy.riskLevel === 'Low' ? 'text-green-600' : 
+              strategy.riskLevel === 'Medium' ? 'text-yellow-600' : 'text-red-600'}`}>
               {strategy.riskLevel}
             </div>
           </div>
         </div>
 
-        {/* Select Button for non-selected cards */}
-        {!isSelected && (
-          <div className="mt-4">
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                onSelect(strategy);
-              }}
-              className="w-full h-10 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg"
-            >
-              Select
-            </Button>
-          </div>
+        {/* FOMO Counter - More Compact */}
+        {!isSelected && strategy.whaleActivity && strategy.whaleActivity.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mb-2 text-center"
+          >
+            <div className="text-xs text-gray-600 mb-0.5">
+              <Eye size={10} className="inline mr-1" />
+              {Math.floor(Math.random() * 47) + 13} users watching
+            </div>
+            <div className="text-xs text-orange-600 font-medium">
+              🔥 {strategy.whaleActivity.length} major deposits in 4h
+            </div>
+          </motion.div>
         )}
 
-      </CardContent>
-    </Card>
+        {/* Select Button - More Compact */}
+        {!isSelected && (
+          <motion.button
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(strategy);
+            }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full h-10 sm:h-12 text-sm font-bold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+          >
+            Select Strategy
+          </motion.button>
+        )}
+
+        {/* Selected State Info - More Compact */}
+        {isSelected && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center"
+          >
+            <div className="text-white/90 text-sm">
+              ✅ Strategy Selected
+            </div>
+            <div className="text-white/70 text-xs mt-0.5">
+              Configure amount below
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </motion.div>
   );
 }

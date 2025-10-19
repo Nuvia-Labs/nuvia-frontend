@@ -1,23 +1,29 @@
 'use client';
 
-import { useAccount, useDisconnect, useBalance } from 'wagmi';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useAccount, useBalance } from 'wagmi';
 import { useCallback } from 'react';
 import { config } from '@/lib/config';
 
 export function useWallet() {
-  const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
+  const { authenticated, user, logout } = usePrivy();
+  const { wallets } = useWallets();
+  const { address } = useAccount();
+
+  // Get the active wallet address - either from embedded wallet or connected wallet
+  const walletAddress = address || wallets[0]?.address;
+  const isConnected = authenticated && !!walletAddress;
 
   const { data: usdcBalance } = useBalance({
-    address,
+    address: walletAddress as `0x${string}`,
     token: config.contracts.usdc,
   });
 
   const getBalance = useCallback(async (assetSymbol: string): Promise<number> => {
-    if (!address) return 0;
+    if (!walletAddress) return 0;
 
     if (assetSymbol === 'USDC' && usdcBalance) {
-      return parseFloat(usdcBalance.formatted);
+      return Number(usdcBalance.formatted);
     }
 
     const mockBalances: Record<string, number> = {
@@ -26,13 +32,15 @@ export function useWallet() {
     };
 
     return mockBalances[assetSymbol] || 0;
-  }, [address, usdcBalance]);
+  }, [walletAddress, usdcBalance]);
 
   return {
-    address,
+    address: walletAddress,
     isConnected,
-    disconnect,
+    disconnect: logout,
     getBalance,
-    usdcBalance: usdcBalance ? parseFloat(usdcBalance.formatted) : 0
+    usdcBalance: usdcBalance ? Number(usdcBalance.formatted) : 0,
+    user,
+    authenticated
   };
 }

@@ -62,7 +62,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <meta property="fc:frame:button:1:action" content="link" />
         <meta property="fc:frame:button:1:target" content={process.env.NEXT_PUBLIC_APP_URL} />
       </head>
-      <body className="font-inter antialiased bg-white min-h-screen">
+      <body className="font-inter antialiased bg-white min-h-screen" suppressHydrationWarning={true}>
         <Providers>
           <LoadingProvider>
             <LayoutContent>
