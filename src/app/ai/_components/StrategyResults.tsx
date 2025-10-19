@@ -6,29 +6,11 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useExecuteStrategy } from '@/hooks/useExecuteStrategy';
 import { SuccessNotification } from '@/components/SuccessNotification';
+import type { RecommendedStrategyResponse } from '../_types';
+import { useAIStore } from '../_store/useAIStore';
 
 interface StrategyResultsProps {
-  data: {
-    strategy_id: string;
-    allocations: Record<string, number>;
-    expected_apy: number;
-    risk_score: number;
-    risk_tolerance: string;
-    reasoning: string;
-    diversification_score: number;
-    comparison: {
-      current_apy: number;
-      proposed_apy: number;
-      apy_improvement: number;
-      changes: Array<{
-        protocol: string;
-        change: number;
-        direction: string;
-      }>;
-      recommendation: string;
-    };
-  };
-  amount: number;
+  data: RecommendedStrategyResponse;
 }
 
 const protocolLogos: Record<string, string> = {
@@ -44,9 +26,10 @@ const protocolLogos: Record<string, string> = {
   'Euler': '/Images/Logo/euler-logo.png',
 };
 
-export function StrategyResults({ data, amount }: StrategyResultsProps) {
+export function StrategyResults({ data }: StrategyResultsProps) {
   const { executeStrategy, isLoading, isCompleted, hasError, errorMessage, step, reset } = useExecuteStrategy();
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
+  const amount = useAIStore((state) => state.amount);
 
   const getRiskColor = (score: number) => {
     if (score <= 3) return { color: '#10b981', bg: '#dcfce7', label: 'Low Risk' };

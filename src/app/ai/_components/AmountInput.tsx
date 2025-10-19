@@ -1,23 +1,22 @@
 'use client';
 
+import type { ChangeEvent } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useAIStore } from '../_store/useAIStore';
 
-interface AmountInputProps {
-  amount: number;
-  onAmountChange: (amount: number) => void;
-}
-
-export function AmountInput({ amount, onAmountChange }: AmountInputProps) {
+export function AmountInput() {
+  const amount = useAIStore((state) => state.amount);
+  const setAmount = useAIStore((state) => state.setAmount);
   const presetAmounts = [10, 100, 500, 1000];
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Allow empty string (when user clears the input)
     if (value === '') {
-      onAmountChange(0);
+      setAmount(0);
     } else {
-      onAmountChange(Number(value));
+      setAmount(Number(value));
     }
   };
 
@@ -58,7 +57,7 @@ export function AmountInput({ amount, onAmountChange }: AmountInputProps) {
         {presetAmounts.map((preset) => (
           <motion.button
             key={preset}
-            onClick={() => onAmountChange(preset)}
+            onClick={() => setAmount(preset)}
             className={`py-2 px-3 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1 ${
               amount === preset
                 ? 'bg-red-500 text-white'

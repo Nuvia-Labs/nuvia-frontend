@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
+import { useAIStore } from '../_store/useAIStore';
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 import catStakeAnimation from '../../../../public/Images/Logo/cat-stake.json';
@@ -10,12 +11,13 @@ import catSupplyAnimation from '../../../../public/Images/Logo/cat-supply.json';
 import degenModeAnimation from '../../../../public/Images/Logo/degen_mode.json';
 
 interface StrategySelectorProps {
-  selectedStrategy: string | null;
-  onStrategySelect: (strategy: string) => void;
+  onStrategySelect?: (strategy: string) => void;
 }
 
-export function StrategySelector({ selectedStrategy, onStrategySelect }: StrategySelectorProps) {
+export function StrategySelector({ onStrategySelect }: StrategySelectorProps = {}) {
   const [isMounted, setIsMounted] = useState(false);
+  const selectedStrategy = useAIStore((state) => state.selectedStrategy);
+  const selectStrategy = useAIStore((state) => state.selectStrategy);
 
   useEffect(() => {
     setIsMounted(true);
@@ -52,7 +54,10 @@ export function StrategySelector({ selectedStrategy, onStrategySelect }: Strateg
         {strategies.map((strategy) => (
           <motion.button
             key={strategy.id}
-            onClick={() => onStrategySelect(strategy.id)}
+            onClick={() => {
+              selectStrategy(strategy.id);
+              onStrategySelect?.(strategy.id);
+            }}
             className={`p-3 sm:p-4 rounded-xl border transition-all ${
               selectedStrategy === strategy.id
                 ? 'border-red-500 bg-red-50 shadow-sm'

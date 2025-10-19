@@ -106,7 +106,7 @@ export default function Earn() {
       <HeroSection />
 
       <div className="bg-white rounded-t-3xl px-4 pt-4 pb-18 -mt-6 relative z-10 flex-1">
-        {!hasTriggeredAI && <TriggerAISection onTrigger={handleTriggerAI} />}
+        {!hasTriggeredAI && isConnected && <TriggerAISection onTrigger={handleTriggerAI} />}
 
         {isLoading && <LoadingState />}
 
@@ -140,7 +140,7 @@ export default function Earn() {
           message={`Successfully executed strategy with $${amount.toLocaleString()} investment. Your funds are now optimally allocated.`}
         />
 
-        {!isConnected && !hasTriggeredAI && <ConnectWalletPrompt />}
+        {!isConnected && <ConnectWalletPrompt />}
       </div>
 
       <LoadingOverlay isVisible={isLoading} />

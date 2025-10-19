@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
-import { useGetRecommentStrategy } from '@/hooks/useGetRecommentStrategy';
+import { useShallow } from 'zustand/react/shallow';
 import { HeroSection } from './_components/HeroSection';
 import { StrategySelector } from './_components/StrategySelector';
 import { AmountInput } from './_components/AmountInput';
 import { StrategyResults } from './_components/StrategyResults';
+import { useAIStore } from './_store/useAIStore';
+import type { StrategyRequest } from './_types';
 
 const Lottie = dynamic(() => import('lottie-react'), { 
   ssr: false,
@@ -17,11 +19,27 @@ import catAskAnimation from '../../../public/Images/Logo/cat-ask.json';
 import catLoadingAnimation from '../../../public/Images/Logo/CatLoading.json';
 
 export default function AI() {
-  const [selectedStrategy, setSelectedStrategy] = useState<string | null>(null);
-  const [amount, setAmount] = useState<number>(0);
-  const [hasSearched, setHasSearched] = useState(false);
-  
-  const { data, isLoading, error, fetchRecommendedStrategy } = useGetRecommentStrategy();
+  const {
+    selectedStrategy,
+    amount,
+    hasSearched,
+    data,
+    isLoading,
+    error,
+    selectStrategy,
+    fetchRecommendation,
+  } = useAIStore(
+    useShallow((state) => ({
+      selectedStrategy: state.selectedStrategy,
+      amount: state.amount,
+      hasSearched: state.hasSearched,
+      data: state.data,
+      isLoading: state.isLoading,
+      error: state.error,
+      selectStrategy: state.selectStrategy,
+      fetchRecommendation: state.fetchRecommendation,
+    }))
+  );
 
   useEffect(() => {
     // Hide/show navbars during loading
@@ -35,49 +53,39 @@ export default function AI() {
   useEffect(() => {
     if (hasSearched && !isLoading && data) {
       const strategySection = document.getElementById('strategy-results');
-      if (strategySection) {
-        strategySection.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
+      strategySection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [hasSearched, isLoading, data]);
 
 
-  const handleStrategySelect = (strategy: string) => {
-    setSelectedStrategy(strategy);
-    
-    // Auto-scroll to amount input after strategy selection
-    setTimeout(() => {
-      const amountSection = document.getElementById('amount-input-section');
-      if (amountSection) {
-        amountSection.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    }, 300); // Small delay to ensure DOM is updated
-  };
+  const handleStrategySelect = useCallback(
+    (strategy: string) => {
+      selectStrategy(strategy);
 
-  const handleGetRecommendation = async () => {
+      // Auto-scroll to amount input after strategy selection
+      setTimeout(() => {
+        const amountSection = document.getElementById('amount-input-section');
+        amountSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    },
+    [selectStrategy]
+  );
+
+  const handleGetRecommendation = useCallback(async () => {
     if (!selectedStrategy) return;
 
-    try {
-      setHasSearched(false);
-      
-      const requestData = {
-        risk_tolerance: selectedStrategy,
-        amount: amount,
-        exclude_protocols: [],
-      };
+    const requestData: StrategyRequest = {
+      risk_tolerance: selectedStrategy,
+      amount,
+      exclude_protocols: [],
+    };
 
-      await fetchRecommendedStrategy(requestData);
-      setHasSearched(true);
+    try {
+      await fetchRecommendation(requestData);
     } catch (err) {
       console.error('Failed to fetch recommendation:', err);
     }
-  };
+  }, [amount, fetchRecommendation, selectedStrategy]);
 
   return (
     <div className="w-full max-w-md mx-auto min-h-screen bg-gradient-to-br from-red-500 to-red-600">
@@ -87,18 +95,12 @@ export default function AI() {
       {/* Content Area */}
       <div className="bg-white rounded-t-3xl px-4 pt-6 pb-18 -mt-6 relative z-10">
         {/* Strategy Selection */}
-        <StrategySelector
-          selectedStrategy={selectedStrategy}
-          onStrategySelect={handleStrategySelect}
-        />
+        <StrategySelector onStrategySelect={handleStrategySelect} />
 
         {/* Amount Input */}
         {selectedStrategy && (
           <div id="amount-input-section">
-            <AmountInput
-              amount={amount}
-              onAmountChange={setAmount}
-            />
+            <AmountInput />
           </div>
         )}
 
@@ -219,7 +221,7 @@ export default function AI() {
         {/* Search Results */}
         {hasSearched && !isLoading && data && (
           <div id="strategy-results">
-            <StrategyResults data={data} amount={amount} />
+            <StrategyResults data={data} />
           </div>
         )}
 
