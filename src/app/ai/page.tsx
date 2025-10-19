@@ -15,10 +15,11 @@ const Lottie = dynamic(() => import('lottie-react'), {
   loading: () => <div className="w-20 h-20 bg-gray-100 rounded-lg animate-pulse" />
 });
 import catAskAnimation from '../../../public/Images/Logo/cat-ask.json';
+import catLoadingAnimation from '../../../public/Images/Logo/CatLoading.json';
 
 export default function AI() {
   const [selectedStrategy, setSelectedStrategy] = useState<string | null>(null);
-  const [amount, setAmount] = useState<number>(10000);
+  const [amount, setAmount] = useState<number>(0);
   const [hasSearched, setHasSearched] = useState(false);
   
   const { data, isLoading, error, fetchRecommendedStrategy } = useGetRecommentStrategy();
@@ -29,12 +30,20 @@ export default function AI() {
       setGlobalLoading(isLoading);
     });
     
+    // Hide/show navbars during loading
+    if (isLoading) {
+      document.body.classList.add('hide-navbars');
+    } else {
+      document.body.classList.remove('hide-navbars');
+    }
+    
     // Safety timeout: force stop global loading after 10 seconds
     if (isLoading) {
       const timeout = setTimeout(() => {
         startTransition(() => {
           setGlobalLoading(false);
         });
+        document.body.classList.remove('hide-navbars');
       }, 10000);
       
       return () => clearTimeout(timeout);
@@ -66,6 +75,21 @@ export default function AI() {
     }
   }, [error, setGlobalLoading]);
 
+  const handleStrategySelect = (strategy: string) => {
+    setSelectedStrategy(strategy);
+    
+    // Auto-scroll to amount input after strategy selection
+    setTimeout(() => {
+      const amountSection = document.getElementById('amount-input-section');
+      if (amountSection) {
+        amountSection.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 300); // Small delay to ensure DOM is updated
+  };
+
   const handleGetRecommendation = async () => {
     if (!selectedStrategy) return;
 
@@ -95,15 +119,17 @@ export default function AI() {
         {/* Strategy Selection */}
         <StrategySelector
           selectedStrategy={selectedStrategy}
-          onStrategySelect={setSelectedStrategy}
+          onStrategySelect={handleStrategySelect}
         />
 
         {/* Amount Input */}
         {selectedStrategy && (
-          <AmountInput
-            amount={amount}
-            onAmountChange={setAmount}
-          />
+          <div id="amount-input-section">
+            <AmountInput
+              amount={amount}
+              onAmountChange={setAmount}
+            />
+          </div>
         )}
 
         {/* AI Search Button */}
@@ -130,8 +156,89 @@ export default function AI() {
         )}
 
 
+        {/* Loading State - Minimalist Full Screen Overlay */}
+        {isLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.1)'
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              className="text-center"
+            >
+              <motion.div
+                className="w-28 h-28 flex items-center justify-center mx-auto mb-6"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{
+                  duration: 0.6,
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 20,
+                  delay: 0.2,
+                }}
+              >
+                <Lottie
+                  animationData={catLoadingAnimation}
+                  loop={true}
+                  className="w-full h-full"
+                />
+              </motion.div>
+              
+              <motion.h3
+                className="text-xl font-bold text-black mb-3"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.4 }}
+              >
+                AI Analyzing Strategies
+              </motion.h3>
+              
+              <motion.p
+                className="text-gray-700 text-sm mb-6 leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.5 }}
+              >
+                Finding optimal DeFi allocations for your portfolio...
+              </motion.p>
+
+              <motion.div
+                className="flex justify-center space-x-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.6 }}
+              >
+                {[0, 1, 2].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="w-3 h-3 bg-black rounded-full"
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      opacity: [0.6, 1, 0.6] 
+                    }}
+                    transition={{
+                      duration: 1.2,
+                      repeat: Infinity,
+                      delay: i * 0.2,
+                      ease: "easeInOut"
+                    }}
+                  />
+                ))}
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+
         {/* Error Message */}
-        {error && (
+        {error && !isLoading && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

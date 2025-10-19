@@ -38,6 +38,10 @@ const protocolLogos: Record<string, string> = {
   'Aave': '/Images/Logo/aave-logo.png',
   'Seamless': '/Images/Logo/nuvia-logo.png',
   'Morpho': '/Images/Logo/morpho-logo.jpeg',
+  'Kizo Protocol': '/Images/Logo/kizo_protocol_logo.jpg',
+  'Kizo': '/Images/Logo/kizo_protocol_logo.jpg',
+  'Euler Finance': '/Images/Logo/euler-logo.png',
+  'Euler': '/Images/Logo/euler-logo.png',
 };
 
 export function StrategyResults({ data, amount }: StrategyResultsProps) {

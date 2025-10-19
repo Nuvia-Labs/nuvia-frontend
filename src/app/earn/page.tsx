@@ -168,7 +168,7 @@ export default function Earn() {
 
   // Generate dynamic strategy recommendations based on API data
   const generateStrategyRecommendations = (): StrategyRecommendation[] => {
-    // Always return exactly 3 strategies with mock data
+    // Always return exactly 5 strategies with mock data (including degen mode)
     const strategies: StrategyRecommendation[] = [];
 
     // Strategy 1: USDC → Aerodrome (Low-Medium Risk)
@@ -211,6 +211,34 @@ export default function Earn() {
       reasoning: `Zora offering exceptional APY with high volatility - high risk, high reward opportunity`,
       riskLevel: "High",
       whaleActivity: generateWhaleActivity("Zora"),
+    });
+
+    // Strategy 4: USDC → Kizo Protocol (Degen Mode - Very High Risk)
+    strategies.push({
+      fromProtocol: "USDC",
+      toProtocol: "Kizo Protocol",
+      amount: 500,
+      frequency: "hourly",
+      duration: 1,
+      expectedGain: 45.67,
+      confidenceTier: "Low",
+      reasoning: `New DeFi protocol offering extreme APY with maximum volatility - pure degen play`,
+      riskLevel: "High",
+      whaleActivity: generateWhaleActivity("Kizo Protocol"),
+    });
+
+    // Strategy 5: USDC → Euler Finance (Degen Mode - Leveraged High Risk)
+    strategies.push({
+      fromProtocol: "USDC",
+      toProtocol: "Euler Finance",
+      amount: 1000,
+      frequency: "daily",
+      duration: 2,
+      expectedGain: 32.89,
+      confidenceTier: "Low",
+      reasoning: `Leveraged lending strategy with Euler Finance - high risk, high return using leverage mechanics`,
+      riskLevel: "High",
+      whaleActivity: generateWhaleActivity("Euler Finance"),
     });
 
     return strategies;

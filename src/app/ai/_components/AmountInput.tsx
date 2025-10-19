@@ -11,6 +11,16 @@ interface AmountInputProps {
 export function AmountInput({ amount, onAmountChange }: AmountInputProps) {
   const presetAmounts = [10, 100, 500, 1000];
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow empty string (when user clears the input)
+    if (value === '') {
+      onAmountChange(0);
+    } else {
+      onAmountChange(Number(value));
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -34,12 +44,12 @@ export function AmountInput({ amount, onAmountChange }: AmountInputProps) {
           </div>
           <input
             type="number"
-            value={amount}
-            onChange={(e) => onAmountChange(Number(e.target.value))}
-            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            value={amount === 0 ? '' : amount}
+            onChange={handleInputChange}
+            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-lg font-medium text-center focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             placeholder="Enter amount"
-            min="100"
-            step="100"
+            min="0"
+            step="1"
           />
         </div>
       </div>

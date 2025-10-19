@@ -86,6 +86,12 @@ export function DynamicStrategyCard({ strategy, onSelect, onDeselect, isSelected
         return '/Images/Logo/etherfi-logo.png';
       case 'morpho':
         return '/Images/Logo/morpho-logo.jpeg';
+      case 'kizo protocol':
+      case 'kizo':
+        return '/Images/Logo/kizo_protocol_logo.jpg';
+      case 'euler finance':
+      case 'euler':
+        return '/Images/Logo/euler-logo.png';
       default:
         return '/Images/Logo/usdc-logo.png'; // fallback to USDC
     }
