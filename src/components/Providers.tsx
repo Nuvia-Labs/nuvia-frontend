@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider } from '@privy-io/wagmi'
 import { config as wagmiConfig } from '@/lib/wagmi'
 import { ClientOnly } from './ClientOnly'
+import { NavigationProvider } from '@/providers/NavigationProvider'
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 
@@ -62,7 +63,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         >
           <QueryClientProvider client={queryClient}>
             <WagmiProvider config={wagmiConfig}>
-              {children}
+              <NavigationProvider>
+                {children}
+              </NavigationProvider>
             </WagmiProvider>
           </QueryClientProvider>
         </PrivyProvider>

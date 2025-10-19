@@ -8,7 +8,6 @@ import { formatAPR, formatTVL } from '@/lib/utils';
 import { mockRewardMultipliers } from '@/lib/mock-data';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/badge';
 
 interface AssetCardProps {
   asset: Asset;
@@ -16,7 +15,7 @@ interface AssetCardProps {
   userDeposited?: number;
 }
 
-export function AssetCard({ asset, onSelect, userDeposited = 0 }: AssetCardProps) {
+export function AssetCard({ asset, onSelect }: AssetCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   
   const handleSelect = () => {

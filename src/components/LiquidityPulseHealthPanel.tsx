@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, Activity, Shield, TrendingDown } from 'lucide-react';
+import { AlertTriangle, Activity, TrendingDown } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/badge';
 

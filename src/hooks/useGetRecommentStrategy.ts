@@ -102,7 +102,7 @@ export function useGetRecommentStrategy() {
         const result = await response.json();
         setData(result);
         return result;
-      } catch (apiErr) {
+      } catch {
         // Fallback to mock data for conservative/moderate strategies
         await new Promise(resolve => setTimeout(resolve, 1500));
         

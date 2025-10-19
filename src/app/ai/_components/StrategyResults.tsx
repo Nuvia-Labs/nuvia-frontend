@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TrendingUp, Bot, Target, Shield, Loader2 } from 'lucide-react';
+import { TrendingUp, Bot, Shield, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useExecuteStrategy } from '@/hooks/useExecuteStrategy';

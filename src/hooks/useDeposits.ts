@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Deposit, Asset, DepositStatus } from '@/lib/types';
-import { mockApiResponses, generateMockDeposit } from '@/lib/mock-data';
+import { mockApiResponses } from '@/lib/mock-data';
 import { storage } from '@/lib/utils';
 
 export function useDeposits(userFid?: string) {

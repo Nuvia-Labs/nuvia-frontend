@@ -40,7 +40,6 @@ export function DeFiWeatherboard({ forecasts, protocols }: DeFiWeatherboardProps
     const decliningCount = forecasts.filter(f => f.trend.toLowerCase() === 'declining').length;
     const avgConfidence = forecasts.reduce((sum, f) => sum + f.confidence, 0) / forecasts.length;
     const avgPulseScore = protocols.reduce((sum, p) => sum + p.pulse_score, 0) / protocols.length;
-    const strongProtocols = protocols.filter(p => p.status.toLowerCase() === 'strong').length;
     const positiveFlows = protocols.filter(p => p.tvl_change_24h > 0).length;
 
     // Stable Season: majority rising + high pulse scores + good confidence

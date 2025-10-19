@@ -1,10 +1,11 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Users, Layers, Briefcase, Zap } from 'lucide-react';
-import { useMemo, useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useNavigationStore, getIndexFromPathname } from '@/stores/navigationStore';
 
 const navItems = [
   { href: '/friends', label: 'Friends', icon: Users },
@@ -16,12 +17,29 @@ const navItems = [
 export function BottomNavbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [isAILoading, setIsAILoading] = useState(false);
-  const [hideNavbars, setHideNavbars] = useState(false);
+  
+  // Zustand store
+  const {
+    activeIndex,
+    isTransitioning,
+    hideNavbars,
+    isAILoading,
+    setActiveIndex,
+    setHideNavbars,
+    setAILoading,
+  } = useNavigationStore();
+
+  // Sync pathname changes with Zustand store
+  useEffect(() => {
+    const newIndex = getIndexFromPathname(pathname);
+    if (newIndex !== activeIndex) {
+      setActiveIndex(newIndex);
+    }
+  }, [pathname, activeIndex, setActiveIndex]);
 
   useEffect(() => {
     const handleAILoading = (event: CustomEvent) => {
-      setIsAILoading(event.detail.isLoading);
+      setAILoading(event.detail.isLoading);
     };
 
     window.addEventListener('ai-loading-state', handleAILoading as EventListener);
@@ -29,7 +47,7 @@ export function BottomNavbar() {
     return () => {
       window.removeEventListener('ai-loading-state', handleAILoading as EventListener);
     };
-  }, []);
+  }, [setAILoading]);
 
   // Watch for hide-navbars class changes
   useEffect(() => {
@@ -46,79 +64,96 @@ export function BottomNavbar() {
     setHideNavbars(document.body.classList.contains('hide-navbars'));
 
     return () => observer.disconnect();
-  }, []);
+  }, [setHideNavbars]);
 
-  // Memoize active index calculation
-  const currentActiveIndex = useMemo(() => {
-    const index = navItems.findIndex(item => item.href === pathname);
-    return index >= 0 ? index : 0;
-  }, [pathname]);
-
-  // Memoize navigation items to prevent re-renders
-  const navigationItems = useMemo(() => {
-    return navItems.map((item, index) => ({
-      ...item,
-      isActive: pathname === item.href,
-      index
-    }));
-  }, [pathname]);
-
-  // Handle navigation with immediate visual feedback
-  const handleNavigation = (href: string) => {
+  // Handle navigation with smooth transitions
+  const handleNavigation = (href: string, index: number) => {
+    // Update active index immediately for smooth visual feedback
+    setActiveIndex(index);
+    // Navigate to new route
     router.push(href);
   };
 
-  // Hide navbar when AI is loading or when navbars should be hidden
-  if (isAILoading || hideNavbars) {
-    return null;
-  }
-
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="w-full max-w-sm mx-auto">
-        <div className="flex items-center justify-center py-4 relative">
-          <div className="flex items-center bg-gray-50 rounded-full p-1 relative px-2 shadow-lg border-2 border-gray-200">
-            {/* Animated Background - Optimized */}
-            <motion.div
-              className="absolute bg-gradient-to-r from-red-500 to-red-600 rounded-full shadow-lg border-2 border-red-300"
-              style={{
-                width: '70px',
-                height: '44px',
-                left: '8px',
-              }}
-              animate={{
-                x: currentActiveIndex * 70,
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 30,
-                mass: 0.8
-              }}
-            />
-            
-            {/* Navigation Items - Optimized */}
-            {navigationItems.map((item) => (
-              <button
-                key={item.href}
-                onClick={() => handleNavigation(item.href)}
-                className="relative z-10"
-              >
-                <div
-                  className={cn(
-                    'flex items-center justify-center w-[70px] h-11 rounded-full transition-colors duration-200',
-                    item.isActive
-                      ? 'text-white'
-                      : 'text-gray-400 hover:text-gray-600'
-                  )}
-                >
-                  <item.icon size={20} />
-                </div>
-              </button>
-            ))}
+    <AnimatePresence>
+      {!isAILoading && !hideNavbars && (
+        <motion.nav 
+          className="fixed bottom-0 left-0 right-0 z-50"
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          transition={{
+            type: "spring",
+            stiffness: 400,
+            damping: 25,
+            mass: 0.8
+          }}
+        >
+          <div className="w-full max-w-sm mx-auto">
+            <div className="flex items-center justify-center py-4 relative">
+              <div className="flex items-center bg-gray-50 rounded-full p-1 relative px-2 shadow-lg border-2 border-gray-200 backdrop-blur-md">
+                {/* Animated Background - Enhanced with Zustand */}
+                <motion.div
+                  className="absolute bg-gradient-to-r from-red-500 to-red-600 rounded-full shadow-lg border-2 border-red-300"
+                  style={{
+                    width: '70px',
+                    height: '44px',
+                    left: '8px',
+                  }}
+                  animate={{
+                    x: activeIndex * 70,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 600,
+                    damping: 35,
+                    mass: 0.6,
+                    velocity: isTransitioning ? 10 : 0
+                  }}
+                />
+                
+                {/* Navigation Items - Enhanced */}
+                {navItems.map((item, index) => {
+                  const isActive = index === activeIndex;
+                  
+                  return (
+                    <motion.button
+                      key={item.href}
+                      onClick={() => handleNavigation(item.href, index)}
+                      className="relative z-10"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <div
+                        className={cn(
+                          'flex items-center justify-center w-[70px] h-11 rounded-full transition-all duration-200',
+                          isActive
+                            ? 'text-white'
+                            : 'text-gray-400 hover:text-gray-600'
+                        )}
+                      >
+                        <motion.div
+                          animate={{
+                            scale: isActive ? 1.1 : 1,
+                            rotateY: isTransitioning && isActive ? 180 : 0
+                          }}
+                          transition={{
+                            duration: 0.3,
+                            ease: "easeInOut"
+                          }}
+                        >
+                          <item.icon size={20} />
+                        </motion.div>
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </nav>
+        </motion.nav>
+      )}
+    </AnimatePresence>
   );
 }
