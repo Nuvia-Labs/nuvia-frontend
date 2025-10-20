@@ -5,7 +5,7 @@ import { WagmiProvider } from '@privy-io/wagmi'
 import { config as wagmiConfig } from '@/lib/wagmi'
 import { ClientOnly } from './ClientOnly'
 import { NavigationProvider } from '@/providers/NavigationProvider'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 
 const PrivyProvider = dynamic(
@@ -17,7 +17,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient())
 
   // Suppress console warnings for known Privy issues
-  useState(() => {
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       const originalError = console.error
       console.error = (...args) => {
@@ -31,8 +31,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
         }
         originalError.apply(console, args)
       }
+      
+      // Cleanup function to restore original console.error
+      return () => {
+        console.error = originalError
+      }
     }
-  })
+  }, [])
 
   return (
     <ClientOnly fallback={<div className="min-h-screen bg-white" />}>
