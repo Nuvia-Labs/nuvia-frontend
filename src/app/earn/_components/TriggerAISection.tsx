@@ -22,7 +22,7 @@ export const TriggerAISection = ({ onTrigger }: TriggerAISectionProps) => {
       </div>
       <motion.button
         onClick={onTrigger}
-        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl mx-auto transform-gpu"
+        className="cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl mx-auto transform-gpu"
         whileHover={{
           scale: 1.02,
           boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",

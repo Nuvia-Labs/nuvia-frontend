@@ -58,7 +58,7 @@ export function StrategySelector({ onStrategySelect }: StrategySelectorProps = {
               selectStrategy(strategy.id);
               onStrategySelect?.(strategy.id);
             }}
-            className={`p-3 sm:p-4 rounded-xl border transition-all ${
+            className={`p-3 sm:p-4 rounded-xl border transition-all cursor-pointer ${
               selectedStrategy === strategy.id
                 ? 'border-red-500 bg-red-50 shadow-sm'
                 : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'

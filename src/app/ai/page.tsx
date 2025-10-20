@@ -114,7 +114,7 @@ export default function AI() {
             <motion.button
               onClick={handleGetRecommendation}
               disabled={isLoading}
-              className="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-medium flex items-center justify-center space-x-2"
+              className="cursor-pointer w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-medium flex items-center justify-center space-x-2"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >

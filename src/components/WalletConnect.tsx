@@ -2,6 +2,7 @@
 
 import { usePrivy } from '@privy-io/react-auth';
 import { Wallet, User, Mail } from 'lucide-react';
+import { NetworkIndicator } from './NetworkIndicator';
 
 interface WalletConnectProps {
   className?: string;
@@ -69,7 +70,8 @@ export function WalletConnect({ className, variant = 'default' }: WalletConnectP
   const isEmailUser = user?.email || user?.google;
 
   return (
-    <div className={className}>
+    <div className={`${className} space-y-2`}>
+      <NetworkIndicator />
       <button
         onClick={logout}
         type="button"

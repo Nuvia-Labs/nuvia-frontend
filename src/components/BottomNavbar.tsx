@@ -111,7 +111,7 @@ export function BottomNavbar() {
           <motion.button
             key={item.href}
             onClick={() => handleNavigation(item.href, index)}
-            className="relative z-10"
+            className="relative z-10 cursor-pointer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.15 }}
